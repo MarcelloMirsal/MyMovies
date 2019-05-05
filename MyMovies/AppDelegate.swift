@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        window = setupAppWindow(with: LoginViewController() )
         return true
     }
 
@@ -44,3 +44,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// MARK:- Setting Up Window
+
+extension AppDelegate {
+    
+    func setupAppWindow(with rootViewController: UIViewController) -> UIWindow {
+        let window = UIWindow()
+        window.rootViewController = rootViewController
+        window.makeKeyAndVisible()
+        return window
+    }
+    
+    
+    
+    
+}

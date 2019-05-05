@@ -9,6 +9,29 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>MyMoviesUITests copy.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>FB2C575C227E0CB000CA2381</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FB2C5770227E0CB200CA2381</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>FB2C577B227E0CB200CA2381</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 	</dict>
 </dict>
 </plist>
