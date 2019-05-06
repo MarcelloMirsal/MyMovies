@@ -54,7 +54,22 @@ class LoginViewController: UIViewController {
     //MARK:- Handlers
     @objc
     private func loginHandler(button: UIButton) {
-        present(TodayMoviesViewController(), animated: true, completion: nil)
+        let todayViewController = TodayMoviesViewController()
+        let listsViewController = ListsViewController()
+        let searchViewController = SearchViewController()
+        
+        let listsNavigationController = UINavigationController(rootViewController: listsViewController)
+        let searchNavigationController = UINavigationController(rootViewController: searchViewController)
+        
+        todayViewController.tabBarItem = UITabBarItem(title: "Today", image: nil, tag: 0)
+        listsViewController.tabBarItem = UITabBarItem(title: "Lists", image: nil, tag: 0)
+        searchViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+       
+        
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [todayViewController , listsNavigationController , searchNavigationController]
+        
+        present(tabBarController, animated: true, completion: nil)
     }
 }
 

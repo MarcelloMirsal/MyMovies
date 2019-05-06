@@ -28,10 +28,10 @@ class TodayMoviesViewControllerTests: XCTestCase {
         XCTAssertTrue(sut.collectionView.delegate is TodayMoviesViewController)
         XCTAssertTrue(sut.collectionView.dataSource is TodayMoviesViewController)
     }
-    func testCollectionViewCanDequeueCell_ShouldBeUICollectionViewCell() {
+    func testCollectionViewCanDequeueCell_ShouldBeMovieCell() {
         let collectionView = sut.collectionView
         let indexPath = IndexPath(item: 0, section: 0)
-        let dequeuedCell = collectionView.dequeueReusableCell(withReuseIdentifier: sut.movieCellId, for: indexPath)
+        let dequeuedCell = collectionView.dequeueReusableCell(withReuseIdentifier: sut.movieCellId, for: indexPath) as? MovieCell
         XCTAssertNotNil(dequeuedCell)
     }
     func testCollectionViewCanInsertCell_ShouldBeInsertedAtProperIndexPath(){
@@ -54,7 +54,7 @@ class TodayMoviesViewControllerMock: TodayMoviesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: movieCellId)
+        collectionView.register(MovieCell.self, forCellWithReuseIdentifier: movieCellId)
     }
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -66,7 +66,7 @@ class TodayMoviesViewControllerMock: TodayMoviesViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as! MovieCell
         return cell
     }
     

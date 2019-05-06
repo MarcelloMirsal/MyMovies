@@ -21,6 +21,18 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         return collectionView
     }()
     
+    let contentSpacing: CGFloat = 16
+    
+    var statusBarAppearanceIsHidden = false
+    
+    override var prefersStatusBarHidden: Bool {
+        return statusBarAppearanceIsHidden
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
+    
     // MARK:- Methods
     func setupAppearance(){
         view.backgroundColor = .white
@@ -28,8 +40,17 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     func setupCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: movieCellId)
-        collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView.register(MovieCell.self, forCellWithReuseIdentifier: movieCellId)
+        collectionView.register(TodayHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: contentSpacing, bottom: 0, right: contentSpacing)
+        collectionView.panGestureRecognizer.addTarget(self, action: #selector(handle(gesture:)))
+    }
+    
+    func updateStatusBarAppearance(isHidden : Bool) {
+        statusBarAppearanceIsHidden = isHidden
+        UIView.animate(withDuration: 0.25) {
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
     }
     
     // MARK:- Life Cycle
@@ -39,6 +60,36 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         setupCollectionView()
         setupViews()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateStatusBarAppearance(isHidden: false)
+    }
+    
+    
+    // MARK:- Handlers
+    // Bouncing animation when draggin cell for scrolling action
+    @objc
+    func handle(gesture:UIPanGestureRecognizer){
+        let cellLocation = gesture.location(in: collectionView)
+        switch gesture.state {
+        case .began:
+            for cell in collectionView.visibleCells {
+                if cell.frame.contains(cellLocation) {
+                    UIView.animateKeyframes(withDuration: 0.75, delay: 0, options: [], animations: {
+                        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5, animations: {
+                            cell.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
+                        })
+                        UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 1, animations: {
+                            cell.transform = CGAffineTransform.identity
+                        })
+                    }, completion: nil)
+                }
+            }
+        default:
+            break
+        }
+    }
+
 }
 
 
@@ -70,19 +121,16 @@ extension TodayMoviesViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath)
-        cell.backgroundColor = .red
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as! MovieCell
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath)
-        header.backgroundColor = .blue
-        print(indexPath)
         return header
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.frame.width - 36
+        let width = collectionView.frame.width - (contentSpacing * 2)
         let height = width * 4 / 3
         return CGSize(width: width, height: height)
     }
@@ -92,11 +140,17 @@ extension TodayMoviesViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 18
+        return contentSpacing * 2
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 70)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movieDetailsViewController = MovieDetailsViewController()
+        updateStatusBarAppearance(isHidden: true)
+        present(movieDetailsViewController, animated: true, completion: nil)
+    }
+
 }
