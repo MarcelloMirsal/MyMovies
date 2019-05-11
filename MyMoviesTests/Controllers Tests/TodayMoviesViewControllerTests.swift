@@ -31,15 +31,20 @@ class TodayMoviesViewControllerTests: XCTestCase {
     func testCollectionViewCanDequeueCell_ShouldBeMovieCell() {
         let collectionView = sut.collectionView
         let indexPath = IndexPath(item: 0, section: 0)
-        let dequeuedCell = collectionView.dequeueReusableCell(withReuseIdentifier: sut.movieCellId, for: indexPath) as? MovieCell
-        XCTAssertNotNil(dequeuedCell)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath)
+        XCTAssertNotNil(cell is MovieCell)
     }
-    func testCollectionViewCanInsertCell_ShouldBeInsertedAtProperIndexPath(){
-        let newMovie = "Movie4"
-        sut.moviesMock.append(newMovie)
-        sut.collectionView.reloadData()
-        XCTAssertEqual(sut.collectionView.numberOfItems(inSection: 0), sut.moviesMock.count)
+    func testCollectionViewCanInsertCell_ShouldBeAdded(){
+        let collectionView = sut.collectionView
+        let newMovie = Movie(id: 14, title: "Movie5", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate")
+        sut.apiResponse.results.append(newMovie)
+        let indexPath = IndexPath(item: sut.apiResponse.results.count-1, section: 0)
+        collectionView.reloadData()
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as? MovieCell
+        XCTAssertEqual(collectionView.numberOfItems(inSection: 0), sut.apiResponse.results.count)
+        XCTAssertNotNil(cell)
     }
+    
 
 }
 
@@ -48,29 +53,22 @@ class TodayMoviesViewControllerTests: XCTestCase {
 
 class TodayMoviesViewControllerMock: TodayMoviesViewController {
     
-    
-    var moviesMock = [ "Movie1", "Movie2", "Movie3" ]
     let movieCellId = "MovieCell"
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        collectionView.register(MovieCell.self, forCellWithReuseIdentifier: movieCellId)
+        setupAppearance()
+        setupCollectionView()
+        setupViews()
+        apiResponse = nil
+        let movies = [
+            Movie(id: 1, title: "Movie1", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
+            Movie(id: 12, title: "Movie2", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
+            Movie(id: 13, title: "Movie3", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
+            Movie(id: 14, title: "Movie4", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate")
+        ]
+        apiResponse = ApiResponse<Movie>(page: 1, totalPages: 123, results: movies)
+        collectionView.reloadData()
     }
-    
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return moviesMock.count
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as! MovieCell
-        return cell
-    }
-    
-    
     
     
 }

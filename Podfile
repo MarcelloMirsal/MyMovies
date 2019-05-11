@@ -7,6 +7,9 @@ target 'MyMovies' do
 
   # Pods for MyMovies
 
+  pod 'Alamofire'
+  pod 'AlamofireImage'
+  
   target 'MyMoviesTests' do
     inherit! :search_paths
     # Pods for testing

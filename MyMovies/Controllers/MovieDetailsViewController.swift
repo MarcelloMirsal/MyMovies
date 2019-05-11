@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import AlamofireImage
 
 class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     // MARK:- Properties
-    var scrollView: UIScrollView = {
+    var movie: Movie?
+    let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
         scrollView.contentInsetAdjustmentBehavior = .never
@@ -118,7 +120,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     }
     
     func setupScrollView() {
-        
+        scrollView.delegate = self
         // MARK:- contentsView setup
         scrollView.addSubview(contentsView)
         contentsView.setConstraint(for: contentsView.topAnchor, to: scrollView.topAnchor)
@@ -171,8 +173,9 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     }
     
     func setupTextView() {
-        let titles = ["\nCREED II" , "Release Date\n","Overview\n"]
-        let subTitles = ["\n \n", "September 14, 2018\n\n" , "Between personal obligations and training for his next big fight against an opponent with ties to his family's past, Adonis Creed is up against the challenge of his life.\n\n\n\n\n\n\n\n\n"]
+        guard let movie = self.movie else {return}
+        let titles = ["\n\(movie.title)" , "Release Date\n","Overview\n"]
+        let subTitles = ["\n \n", "\(movie.releaseDate)\n\n" , "\(movie.overview)"]
         
         let textViewAttributedText = NSMutableAttributedString()
         
@@ -199,8 +202,13 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         setupDismissButton()
         setupScrollView()
         setupViews()
+        guard let movie = self.movie else {return}
+        guard let posterURL = URL(string: URLBuilder.url(for: .image, imagePathURL: movie.posterPath)) else {fatalError()}
+        posterImageView.af_setImage(withURL: posterURL)
         setupTextView()
-        scrollView.delegate = self
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     //MARK:- Handlers
@@ -210,11 +218,15 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y+dismissButton.frame.height+8 > posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .black {
+        let safeAreaHeight = scrollView.safeAreaInsets.top
+        let dismissButtonTopSpace: CGFloat = 16
+        let dismissButtonHeight: CGFloat = 15
+        let shift = safeAreaHeight + dismissButtonTopSpace + dismissButtonHeight
+        if scrollView.contentOffset.y+shift > posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .black {
             print("change to black")
             dismissButton.setTitleColor(.white, for: .normal)
             dismissButtonEffect.effect = UIBlurEffect(style: .dark)
-        } else if scrollView.contentOffset.y+dismissButton.frame.height+8 < posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .white  {
+        } else if scrollView.contentOffset.y+shift < posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .white  {
             print("change to light")
             dismissButtonEffect.effect = UIBlurEffect(style: .light)
             dismissButton.setTitleColor(.black, for: .normal)

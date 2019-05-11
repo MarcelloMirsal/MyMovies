@@ -33,6 +33,8 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         return .slide
     }
     
+    var apiResponse: ApiResponse<Movie>!
+    
     // MARK:- Methods
     func setupAppearance(){
         view.backgroundColor = .white
@@ -59,6 +61,7 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         setupAppearance()
         setupCollectionView()
         setupViews()
+        loadContents()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -70,6 +73,7 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     // Bouncing animation when draggin cell for scrolling action
     @objc
     func handle(gesture:UIPanGestureRecognizer){
+        return
         let cellLocation = gesture.location(in: collectionView)
         switch gesture.state {
         case .began:
@@ -117,11 +121,19 @@ extension TodayMoviesViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return apiResponse?.results.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as! MovieCell
+        let movie = apiResponse.results[indexPath.row]
+        
+        cell.titleLabel.text = movie.title
+        cell.dateLabel.text = movie.releaseDate
+        cell.posterImageView.image = nil
+        cell.genreLabel.text = ""
+        guard let posterURL = URL(string: URLBuilder.url(for: .image, imagePathURL: movie.posterPath)) else {fatalError()}
+        cell.posterImageView.af_setImage(withURL: posterURL)
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -149,8 +161,27 @@ extension TodayMoviesViewController {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movieDetailsViewController = MovieDetailsViewController()
+        movieDetailsViewController.movie = apiResponse.results[indexPath.row]
         updateStatusBarAppearance(isHidden: true)
         present(movieDetailsViewController, animated: true, completion: nil)
     }
+}
 
+
+// MARK:- Networking
+
+extension TodayMoviesViewController {
+
+    func loadContents() {
+        NetworkManager().response(for: .todayMovies) { (response) in
+            guard let data = response.data else { fatalError() }
+            guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
+            self.apiResponse = apiResponse
+            self.collectionView.reloadData()
+        }
+    }
+    
+    
+    
+    
 }

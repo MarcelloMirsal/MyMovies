@@ -15,7 +15,8 @@ class MovieCell: UICollectionViewCell {
         let label = UILabel()
         label.text = "Creed II"
         label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = UIFont.boldSystemFont(ofSize: 28)
+        label.numberOfLines = 2
         return label
     }()
     
@@ -66,7 +67,7 @@ class MovieCell: UICollectionViewCell {
         titleLabel.setConstraint(for: titleLabel.topAnchor, to: dateLabel.bottomAnchor)
         titleLabel.setConstraint(for: titleLabel.leadingAnchor, to: leadingAnchor, constant: 12)
         titleLabel.setConstraint(for: titleLabel.trailingAnchor, to: trailingAnchor)
-        titleLabel.heightAnchor.constraint(equalToConstant: 48).isActive = true
+        titleLabel.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
         //MARK: genreLabel
         addSubview(genreLabel)
