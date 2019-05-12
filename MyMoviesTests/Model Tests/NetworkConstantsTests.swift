@@ -47,12 +47,19 @@ class NetworkConstantsTests: XCTestCase {
         XCTAssertEqual(NetworkConstants.ApiPaths.image.rawValue, "/t/p/w500")
     }
     
+    func testApiPath_SearchPathShouldBeEqual(){
+        XCTAssertEqual(NetworkConstants.ApiPaths.search.rawValue, "/search/movie")
+    }
+    
+    
+    
     // MARK:- test ApiQueryItems
     func testApiQueryItems_ShoulBeEqual(){
         XCTAssertEqual(NetworkConstants.ApiQueryItems.apiKey.rawValue, "api_key")
         XCTAssertEqual(NetworkConstants.ApiQueryItems.language.rawValue, "language")
         XCTAssertEqual(NetworkConstants.ApiQueryItems.sortBy.rawValue, "sort_by")
         XCTAssertEqual(NetworkConstants.ApiQueryItems.page.rawValue, "page")
+        XCTAssertEqual(NetworkConstants.ApiQueryItems.searchQuery.rawValue, "query")
     }
     
 }

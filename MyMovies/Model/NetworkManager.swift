@@ -14,20 +14,19 @@ import AlamofireImage
 class NetworkManager {
     
     
-    func response(for apiPath: NetworkConstants.ApiPaths, at page: Int = 1, completion: @escaping (_ dataResponse: DataResponse<Data>) -> ()  ) {
+    func response(for apiPath: NetworkConstants.ApiPaths, at page: Int = 1, value: String = "", completion: @escaping (_ dataResponse: DataResponse<Data>) -> ()  ) {
         
-        Alamofire.request(URLBuilder.url(for: apiPath, at: page)).responseData { (response) in
+        Alamofire.request(URLBuilder.url(for: apiPath, at: page, value: value)).responseData { (response) in
             completion(response)
         }
         
     }
-    
+    // TODO: will be deleted
     func response(imagePath: String, completion: @escaping (_ dataResponse: DataResponse<UIImage>) -> ()) {
-        Alamofire.request(URLBuilder.url(for: .image, imagePathURL: imagePath)).responseImage { (dataResponse) in
+        Alamofire.request(URLBuilder.url(for: .image, value: imagePath)).responseImage { (dataResponse) in
             completion(dataResponse)
         }
     }
-    
     
     init() {
         
@@ -37,7 +36,11 @@ class NetworkManager {
 
 class URLBuilder {
     
-    static func url(for path: NetworkConstants.ApiPaths, at pageNumber: Int = 1, imagePathURL: String = "") -> String {
+    
+    // value: Parameter is Used to pass:
+    // 1- the path of an image
+    // 2- set the search query
+    static func url(for path: NetworkConstants.ApiPaths, at pageNumber: Int = 1, value: String = "") -> String {
         
         switch path {
         case .todayMovies:
@@ -56,7 +59,19 @@ class URLBuilder {
             var urlComponents = URLComponents()
             urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
             urlComponents.host = NetworkConstants.ApiKeys.imageHost.rawValue
-            urlComponents.path = NetworkConstants.ApiPaths.image.rawValue + imagePathURL
+            urlComponents.path = NetworkConstants.ApiPaths.image.rawValue + value
+            return urlComponents.string!
+        case .search:
+            var urlComponents = URLComponents()
+            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
+            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
+            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.search.rawValue
+            urlComponents.queryItems = [
+                NetworkConstants.ApiQueryItems.query(for: .apiKey),
+                NetworkConstants.ApiQueryItems.query(for: .language),
+                NetworkConstants.ApiQueryItems.query(for: .searchQuery, at: pageNumber, value: value),
+                NetworkConstants.ApiQueryItems.query(for: .page, at: pageNumber)
+            ]
             return urlComponents.string!
         }
     }

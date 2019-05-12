@@ -23,13 +23,14 @@ final class NetworkConstants {
         case language = "language"
         case sortBy = "sort_by"
         case page
+        case searchQuery = "query"
         
         private enum ApiQueryItemsValues: String {
             case language = "en-US"
             case sortBy = "popularity.desc"
         }
         
-        static func query(for item: ApiQueryItems, at page: Int = 1) -> URLQueryItem {
+        static func query(for item: ApiQueryItems, at page: Int = 1, value: String = "" ) -> URLQueryItem {
             switch item {
             case .apiKey:
                 return URLQueryItem(name: item.rawValue, value: NetworkConstants.ApiKeys.api.rawValue)
@@ -39,6 +40,8 @@ final class NetworkConstants {
                 return URLQueryItem(name: item.rawValue, value: ApiQueryItemsValues.sortBy.rawValue)
             case .page:
                 return URLQueryItem(name: item.rawValue, value: "\(page)")
+            case .searchQuery:
+                return URLQueryItem(name: item.rawValue, value: value)
             }
         }
     }
@@ -47,6 +50,7 @@ final class NetworkConstants {
     enum ApiPaths: String {
         case todayMovies = "/discover/movie"
         case image = "/t/p/w500"
+        case search = "/search/movie"
     }
     
 }

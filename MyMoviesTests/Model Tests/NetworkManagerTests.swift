@@ -53,12 +53,6 @@ class NetworkManagerTests: XCTestCase {
     }
     
     
-    
-    
-    
-    
-    
-    
     // MARK:- test URLBuilder
     
     func testURLBuilder_TodayMoviesURLShouldBeEqual() {
@@ -70,8 +64,17 @@ class NetworkManagerTests: XCTestCase {
     func testURLBuilder_ImagePathURLShouldBeEqual() {
         let imagePath = "/6sOFQDlkY6El1B2P5gklzJfVdsT.jpg"
         let optimalURL = "https://image.tmdb.org/t/p/w500\(imagePath)"
-        let imageURL = URLBuilder.url(for: .image, imagePathURL: imagePath)
+        let imageURL = URLBuilder.url(for: .image, value: imagePath)
         XCTAssertEqual(optimalURL, imageURL)
     }
+    
+    func testURLBuilder_SearchPathURLShouldBeEqual() {
+        let searchQuery = "Creed"
+        let optimalURL = "https://api.themoviedb.org/3/search/movie?api_key=6203d05815ada391f8b581d00ebbdbd5&language=en-US&query=\(searchQuery)&page=1"
+        let searchURL = URLBuilder.url(for: .search, value: searchQuery)
+        XCTAssertEqual(optimalURL , searchURL)
+    }
+    
+    
     
 }

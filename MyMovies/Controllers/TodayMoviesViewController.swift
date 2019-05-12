@@ -73,8 +73,7 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     // Bouncing animation when draggin cell for scrolling action
     @objc
     func handle(gesture:UIPanGestureRecognizer){
-        return
-        let cellLocation = gesture.location(in: collectionView)
+        /* let cellLocation = gesture.location(in: collectionView)
         switch gesture.state {
         case .began:
             for cell in collectionView.visibleCells {
@@ -91,7 +90,7 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
             }
         default:
             break
-        }
+        } */
     }
 
 }
@@ -132,7 +131,7 @@ extension TodayMoviesViewController {
         cell.dateLabel.text = movie.releaseDate
         cell.posterImageView.image = nil
         cell.genreLabel.text = ""
-        guard let posterURL = URL(string: URLBuilder.url(for: .image, imagePathURL: movie.posterPath)) else {fatalError()}
+        guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
         cell.posterImageView.af_setImage(withURL: posterURL)
         return cell
     }

@@ -77,8 +77,14 @@ class ListsViewController: UITableViewController {
             self.setListContents(for: .watchList)
         }
         
+        let cancelAction = UIAlertAction(title: "cancel", style: .cancel) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        
+        
         alertActionSheetController.addAction(favoriteAction)
         alertActionSheetController.addAction(watchListAction)
+        alertActionSheetController.addAction(cancelAction)
         present(alertActionSheetController, animated: true, completion: nil)
     }
 }

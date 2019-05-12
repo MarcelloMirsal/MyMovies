@@ -203,7 +203,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         setupScrollView()
         setupViews()
         guard let movie = self.movie else {return}
-        guard let posterURL = URL(string: URLBuilder.url(for: .image, imagePathURL: movie.posterPath)) else {fatalError()}
+        guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
         posterImageView.af_setImage(withURL: posterURL)
         setupTextView()
     }
