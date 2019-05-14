@@ -10,6 +10,9 @@ import UIKit
 
 final class NetworkConstants {
     
+    static let demoUser = "Marcello14"
+    static let demoPassword = "05430188153"
+    
     enum ApiKeys: String {
         case api = "6203d05815ada391f8b581d00ebbdbd5"
         case version = "/3"
@@ -24,6 +27,7 @@ final class NetworkConstants {
         case sortBy = "sort_by"
         case page
         case searchQuery = "query"
+        case requestToken = "request_token"
         
         private enum ApiQueryItemsValues: String {
             case language = "en-US"
@@ -42,6 +46,8 @@ final class NetworkConstants {
                 return URLQueryItem(name: item.rawValue, value: "\(page)")
             case .searchQuery:
                 return URLQueryItem(name: item.rawValue, value: value)
+            case .requestToken:
+                return URLQueryItem(name: item.rawValue, value: "")
             }
         }
     }
@@ -51,6 +57,34 @@ final class NetworkConstants {
         case todayMovies = "/discover/movie"
         case image = "/t/p/w500"
         case search = "/search/movie"
+        case requestToken = "/authentication/token/new"
+        case tokenValidation = "/authentication/token/validate_with_login"
+        case session = "/authentication/session/new"
     }
     
+}
+
+
+struct RequestToken: Codable {
+    let success: Bool
+    let expires_at: String
+    let request_token: String
+    func requestBody(username: String, password: String) -> [String : Any] {
+        let params: [String : Any] = [
+            "username" : username,
+            "password": password,
+            NetworkConstants.ApiQueryItems.requestToken.rawValue: request_token ]
+        return params
+    }
+}
+
+
+struct UserSession: Codable {
+    let success: Bool
+    let session_id: String
+    func requestBody(with validatedRequestToken: String) -> [String : Any] {
+        let params: [String : Any] = [
+            NetworkConstants.ApiQueryItems.requestToken.rawValue:  validatedRequestToken]
+        return params
+    }
 }

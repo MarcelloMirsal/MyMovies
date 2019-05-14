@@ -51,6 +51,21 @@ class NetworkConstantsTests: XCTestCase {
         XCTAssertEqual(NetworkConstants.ApiPaths.search.rawValue, "/search/movie")
     }
     
+    func testApiPath_RequestTokenShouldBeEqual(){
+        XCTAssertEqual(NetworkConstants.ApiPaths.requestToken.rawValue , "/authentication/token/new")
+    }
+    
+    func testApiPath_ValidationRequestTokenShouldBeEqual(){
+        XCTAssertEqual(NetworkConstants.ApiPaths.tokenValidation.rawValue , "/authentication/token/validate_with_login")
+    }
+    
+    func testApiPath_sessionShouldBeEqual(){
+        XCTAssertEqual(NetworkConstants.ApiPaths.session.rawValue , "/authentication/session/new")
+    }
+    
+    
+    
+    
     
     
     // MARK:- test ApiQueryItems

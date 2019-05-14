@@ -53,8 +53,7 @@ class LoginViewController: UIViewController {
     }
     
     //MARK:- Handlers
-    @objc
-    private func loginHandler(button: UIButton) {
+    fileprivate func presentTabBarViewController() {
         let todayViewController = TodayMoviesViewController()
         let listsViewController = ListsViewController()
         let searchViewController = SearchViewController()
@@ -65,12 +64,24 @@ class LoginViewController: UIViewController {
         todayViewController.tabBarItem = UITabBarItem(title: "Today", image: nil, tag: 0)
         listsViewController.tabBarItem = UITabBarItem(title: "Lists", image: nil, tag: 0)
         searchViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-       
+        
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [todayViewController , listsNavigationController , searchNavigationController]
         
         present(tabBarController, animated: true, completion: nil)
+    }
+    
+    @objc
+    private func loginHandler(button: UIButton) {
+        
+        NetworkManager().responseToken(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
+            if isSuccedd && error == nil {
+                self.presentTabBarViewController()
+            } else {
+                print(error!.localizedDescription)
+            }
+        }
     }
 }
 

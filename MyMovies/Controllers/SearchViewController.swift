@@ -75,6 +75,14 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
         }
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let movie = filteredMovies[indexPath.row]
+        let movieDetailsViewController = MovieDetailsViewController()
+        movieDetailsViewController.movie = movie
+        present(movieDetailsViewController
+            , animated: true, completion: nil)
+    }
+    
 }
 
 // MARK:- UISearchResultsUpdating protocol

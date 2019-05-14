@@ -28,7 +28,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "poster")
         return imageView
     }()
     

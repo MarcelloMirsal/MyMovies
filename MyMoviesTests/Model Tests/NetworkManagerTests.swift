@@ -52,6 +52,21 @@ class NetworkManagerTests: XCTestCase {
         }
     }
     
+    func testSut_RequestTokenResponseWithoutErrorsAndNotNil(){
+        let exp = expectation(description: "Request Token Validation")
+        
+        sut.responseToken(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword) { (isSuccess, error) in
+            // test error must be nil = no errors
+            XCTAssertNil(error)
+            // test isSuccess
+            XCTAssertTrue(isSuccess)
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (error) in
+            XCTAssertNil(error)
+        }
+    }
     
     // MARK:- test URLBuilder
     
@@ -74,6 +89,31 @@ class NetworkManagerTests: XCTestCase {
         let searchURL = URLBuilder.url(for: .search, value: searchQuery)
         XCTAssertEqual(optimalURL , searchURL)
     }
+    
+    func testURLBuilder_RequestTokenPathURLShouldBeEqual() {
+        let url = URLBuilder.url(for: .requestToken)
+        
+        XCTAssertEqual(url, "https://api.themoviedb.org/3/authentication/token/new?api_key=\(NetworkConstants.ApiKeys.api.rawValue)")
+        
+    }
+    
+    func testURLBuilder_ValidationRequestTokenPathURLShouldBeEqual() {
+        let url = URLBuilder.url(for: .tokenValidation)
+        
+        XCTAssertEqual(url, "https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=\(NetworkConstants.ApiKeys.api.rawValue)")
+    }
+    
+    func testURLBuilder_sessionPathURLShouldBeEqual() {
+        let url = URLBuilder.url(for: .session)
+        
+        XCTAssertEqual(url, "https://api.themoviedb.org/3/authentication/session/new?api_key=\(NetworkConstants.ApiKeys.api.rawValue)")
+    }
+    
+    
+    
+    
+    
+    
     
     
     
