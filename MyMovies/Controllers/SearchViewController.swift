@@ -12,7 +12,6 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
     
     // MARK:- Properties
     var filteredMovies = [Movie]()
-    var apiResponse: ApiResponse<Movie>!
     
     let searchController = UISearchController(searchResultsController: nil)
     

@@ -75,7 +75,7 @@ class LoginViewController: UIViewController {
     @objc
     private func loginHandler(button: UIButton) {
         
-        NetworkManager().responseToken(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
+        NetworkManager().session(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
             if isSuccedd && error == nil {
                 self.presentTabBarViewController()
             } else {

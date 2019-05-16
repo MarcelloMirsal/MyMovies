@@ -13,11 +13,27 @@ import AlamofireImage
 
 class NetworkManager {
     
+    /// holds a validated request token.
+    public static var validatedRequestToken: RequestToken!
+    /// holds a validated user session.
+    public static var userSession: UserSession!
+    /// holds user id (account id)
+    public static var userId: Int!
     
-    private static var validatedRequestToken: RequestToken!
-    private static var userSession: UserSession!
 
     
+    /**
+      Get a data response from API.
+     
+     - Parameter apiPath: the path of requested content.
+     - Parameter page: number of page for results.
+     - Parameter value: a special parameter used only to set search query, image path.
+     - Parameter completion: a block object executed when request ends.
+     - Parameter dataResponse: the returned response from request
+     ## Important Notes ##
+     * the completion block just returns the data response without checking for errors.
+     
+     */
     func response(for apiPath: NetworkConstants.ApiPaths, at page: Int = 1, value: String = "", completion: @escaping (_ dataResponse: DataResponse<Data>) -> ()  ) {
         
         Alamofire.request(URLBuilder.url(for: apiPath, at: page, value: value)).responseData { (response) in
@@ -26,8 +42,20 @@ class NetworkManager {
     }
     
     
-    func responseToken(username: String, password: String, completion: @escaping (_ isValidated: Bool, RequestTokenError?) -> () ) {
+    /**
+     create new user session and validate it .
+     
+     - Parameter username: pass username
+     - Parameter password: pass user's password
+     - Parameter completion: a block object executed when session request ends.
+     - Parameter isValidated: a boolean value indicates if session is successfully granted
+     - Parameter error: the type of request error , nil if there is no error
+     ## Important Notes ##
+     * must check completion parameters to ensure that user session is granted
+     */
+    func session(username: String, password: String, completion: @escaping (_ isValidated: Bool,_ error: RequestError?) -> () ) {
         Alamofire.request(URLBuilder.url(for: .requestToken)).responseData { (tokenResponse) in
+            // MARK: create request token
             if let _ = tokenResponse.error {
                 completion(false, .noResponse)
                 return
@@ -40,6 +68,8 @@ class NetworkManager {
                 completion(false, .dataDecoding)
                 return
             }
+            
+            // MARK: validate request token
             
             let validationURL = URLBuilder.url(for: .tokenValidation)
             let params = requestToken.requestBody(username: username, password: password)
@@ -61,7 +91,7 @@ class NetworkManager {
                 }
                 NetworkManager.validatedRequestToken = validatedRequestToken
                 
-                // MARK:- create User session
+                // MARK: create User session
                 let userSessionParams = [NetworkConstants.ApiQueryItems.requestToken.rawValue: NetworkManager.validatedRequestToken.request_token]
                 
                 Alamofire.request(URLBuilder.url(for: .session), method: .post, parameters: userSessionParams, encoding: JSONEncoding.default, headers: nil).responseData(completionHandler: { (sessionDataResponse) in
@@ -83,12 +113,34 @@ class NetworkManager {
                         return
                     }
                     NetworkManager.userSession = validatedSession
-                    completion(NetworkManager.userSession.success,nil)
-                })
-            })
-            
+                    
+                    
+                    // MARK:- user id details
+                    Alamofire.request(URLBuilder.url(for: .userDetails)).responseJSON(completionHandler: { (userDetailsResponse) in
+                        guard let userDict = try? JSONSerialization.jsonObject(with: userDetailsResponse.data!, options: .allowFragments) as? Dictionary<String,Any> else {
+                            completion(false, .userDetailsDecoding)
+                            return
+                        }
+                        NetworkManager.userId = (userDict["id"] as! Int)
+                        print(NetworkManager.validatedRequestToken.request_token)
+                        print(NetworkManager.userSession.session_id)
+                        completion(NetworkManager.userSession.success,nil)
+                    }) // end of user details request
+                }) // end of user session request
+            }) // end of request token
         }
     }
+    
+    
+    /**
+     return data response for image.
+     
+     - Parameter imagePath: the path of image.
+     - Parameter completion: a block object executed when request ends.
+     - Parameter dataResponse: the returned response from request.
+     ## Important Notes ##
+     * the completion block just returns the data response without checking for errors.
+     */
     
     func response(imagePath: String, completion: @escaping (_ dataResponse: DataResponse<UIImage>) -> ()) {
         Alamofire.request(URLBuilder.url(for: .image, value: imagePath)).responseImage { (dataResponse) in
@@ -102,81 +154,12 @@ class NetworkManager {
 }
 
 
-class URLBuilder {
-    
-    
-    // value: Parameter is Used to pass:
-    // 1- the path of an image
-    // 2- set the search query
-    static func url(for path: NetworkConstants.ApiPaths, at pageNumber: Int = 1, value: String = "") -> String {
-        
-        switch path {
-        case .todayMovies:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.todayMovies.rawValue
-            urlComponents.queryItems = [
-                NetworkConstants.ApiQueryItems.query(for: .apiKey),
-                NetworkConstants.ApiQueryItems.query(for: .language),
-                NetworkConstants.ApiQueryItems.query(for: .sortBy),
-                NetworkConstants.ApiQueryItems.query(for: .page, at: pageNumber)
-            ]
-            return urlComponents.string!
-        case .image:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.imageHost.rawValue
-            urlComponents.path = NetworkConstants.ApiPaths.image.rawValue + value
-            return urlComponents.string!
-        case .search:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.search.rawValue
-            urlComponents.queryItems = [
-                NetworkConstants.ApiQueryItems.query(for: .apiKey),
-                NetworkConstants.ApiQueryItems.query(for: .language),
-                NetworkConstants.ApiQueryItems.query(for: .searchQuery, at: pageNumber, value: value),
-                NetworkConstants.ApiQueryItems.query(for: .page, at: pageNumber)
-            ]
-            return urlComponents.string!
-        case .requestToken:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.requestToken.rawValue
-            urlComponents.queryItems = [
-                NetworkConstants.ApiQueryItems.query(for: .apiKey),
-            ]
-            return urlComponents.string!
-        case .tokenValidation:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.tokenValidation.rawValue
-            urlComponents.queryItems = [
-                NetworkConstants.ApiQueryItems.query(for: .apiKey),
-            ]
-            return urlComponents.string!
-        case .session:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.session.rawValue
-            urlComponents.queryItems = [
-                NetworkConstants.ApiQueryItems.query(for: .apiKey),
-            ]
-            return urlComponents.string!
-        }
-    }
-}
-
-enum RequestTokenError: Error {
+enum RequestError: Error {
     case noResponse
     case dataUnwrapping
     case dataDecoding
     case sessionDenied
+    case userDetailsDecoding
     
     var localizedDescription: String {
         switch self {
@@ -188,6 +171,8 @@ enum RequestTokenError: Error {
             return "Error while trying to decode JSON, check User's info OR codingKeys for RequestToken."
         case .sessionDenied:
             return "Session is not validated, try again"
+        case .userDetailsDecoding:
+            return "Failed to get user details"
         }
     }
 }

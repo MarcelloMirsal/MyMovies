@@ -63,6 +63,24 @@ class NetworkConstantsTests: XCTestCase {
         XCTAssertEqual(NetworkConstants.ApiPaths.session.rawValue , "/authentication/session/new")
     }
     
+    func testApiPath_UserDetailsShouldBeEqual(){
+        XCTAssertEqual(NetworkConstants.ApiPaths.userDetails.rawValue , "/account")
+    }
+    
+    
+    
+    func testApiPath_FavoriteListShouldBeEqual(){
+        let optimalURL = "/account/{account_id}/favorite/movies"
+        XCTAssertEqual(NetworkConstants.ApiPaths.favoriteList.rawValue, optimalURL )
+    }
+    
+    func testApiPath_WatchListShouldBeEqual(){
+        let optimalURL = "/account/{account_id}/watchlist/movies"
+        XCTAssertEqual(NetworkConstants.ApiPaths.watchList.rawValue, optimalURL )
+    }
+    
+    
+    
     
     
     
@@ -75,6 +93,7 @@ class NetworkConstantsTests: XCTestCase {
         XCTAssertEqual(NetworkConstants.ApiQueryItems.sortBy.rawValue, "sort_by")
         XCTAssertEqual(NetworkConstants.ApiQueryItems.page.rawValue, "page")
         XCTAssertEqual(NetworkConstants.ApiQueryItems.searchQuery.rawValue, "query")
+        XCTAssertEqual(NetworkConstants.ApiQueryItems.sessionId.rawValue, "session_id")
     }
     
 }

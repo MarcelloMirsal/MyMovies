@@ -128,7 +128,7 @@ extension TodayMoviesViewController {
         let movie = apiResponse.results[indexPath.row]
         
         cell.titleLabel.text = movie.title
-        cell.dateLabel.text = movie.releaseDate
+        cell.dateLabel.text = Date().customDate(from: movie.releaseDate)
         cell.posterImageView.image = nil
         cell.genreLabel.text = ""
         guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
@@ -179,8 +179,4 @@ extension TodayMoviesViewController {
             self.collectionView.reloadData()
         }
     }
-    
-    
-    
-    
 }

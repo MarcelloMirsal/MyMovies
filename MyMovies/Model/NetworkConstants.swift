@@ -28,6 +28,7 @@ final class NetworkConstants {
         case page
         case searchQuery = "query"
         case requestToken = "request_token"
+        case sessionId = "session_id"
         
         private enum ApiQueryItemsValues: String {
             case language = "en-US"
@@ -48,6 +49,8 @@ final class NetworkConstants {
                 return URLQueryItem(name: item.rawValue, value: value)
             case .requestToken:
                 return URLQueryItem(name: item.rawValue, value: "")
+            case .sessionId:
+                return URLQueryItem(name: item.rawValue, value: NetworkManager.userSession.session_id)
             }
         }
     }
@@ -60,7 +63,12 @@ final class NetworkConstants {
         case requestToken = "/authentication/token/new"
         case tokenValidation = "/authentication/token/validate_with_login"
         case session = "/authentication/session/new"
+        case favoriteList = "/account/{account_id}/favorite/movies"
+        case watchList = "/account/{account_id}/watchlist/movies"
+        case userDetails = "/account"
+        
     }
+
     
 }
 

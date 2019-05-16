@@ -28,6 +28,8 @@
 		FB2C59372284B929005052EF /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2C59362284B929005052EF /* NetworkManager.swift */; };
 		FB2C593A2284F92B005052EF /* MovieTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2C59392284F92B005052EF /* MovieTests.swift */; };
 		FB2C593C228515C5005052EF /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2C593B228515C5005052EF /* Movie.swift */; };
+		FB5F4E7D228B6A8F002005D9 /* URLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F4E7C228B6A8F002005D9 /* URLBuilder.swift */; };
+		FB5F4E7F228B6AD3002005D9 /* URLBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F4E7E228B6AD3002005D9 /* URLBuilderTests.swift */; };
 		FBE106B5227F288F00F19952 /* MovieCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106B4227F288F00F19952 /* MovieCellTests.swift */; };
 		FBE106BA227F295500F19952 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106B9227F295500F19952 /* MovieCell.swift */; };
 		FBE106BC227F32F400F19952 /* TodayHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106BB227F32F400F19952 /* TodayHeader.swift */; };
@@ -75,6 +77,8 @@
 		FB2C59362284B929005052EF /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FB2C59392284F92B005052EF /* MovieTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieTests.swift; sourceTree = "<group>"; };
 		FB2C593B228515C5005052EF /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
+		FB5F4E7C228B6A8F002005D9 /* URLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBuilder.swift; sourceTree = "<group>"; };
+		FB5F4E7E228B6AD3002005D9 /* URLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBuilderTests.swift; sourceTree = "<group>"; };
 		FBE106B4227F288F00F19952 /* MovieCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCellTests.swift; sourceTree = "<group>"; };
 		FBE106B9227F295500F19952 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
 		FBE106BB227F32F400F19952 /* TodayHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayHeader.swift; sourceTree = "<group>"; };
@@ -179,6 +183,7 @@
 		FB2C59382284F7DA005052EF /* Model Tests */ = {
 			isa = PBXGroup;
 			children = (
+				FB5F4E7E228B6AD3002005D9 /* URLBuilderTests.swift */,
 				FB2C59392284F92B005052EF /* MovieTests.swift */,
 				FB2C59322283AA68005052EF /* NetworkConstantsTests.swift */,
 				FB2C59302283AA2E005052EF /* NetworkManagerTests.swift */,
@@ -201,6 +206,7 @@
 		FBE106B2227F284A00F19952 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				FB5F4E7C228B6A8F002005D9 /* URLBuilder.swift */,
 				FB2C593B228515C5005052EF /* Movie.swift */,
 				FB2C59342283AB15005052EF /* NetworkConstants.swift */,
 				FB2C59362284B929005052EF /* NetworkManager.swift */,
@@ -418,6 +424,7 @@
 				FB2C5794227E11D900CA2381 /* LoginViewController.swift in Sources */,
 				FB2C593C228515C5005052EF /* Movie.swift in Sources */,
 				FB2C59352283AB15005052EF /* NetworkConstants.swift in Sources */,
+				FB5F4E7D228B6A8F002005D9 /* URLBuilder.swift in Sources */,
 				FB0C8D062280C8F60056C79F /* ListsViewController.swift in Sources */,
 				FB2C59372284B929005052EF /* NetworkManager.swift in Sources */,
 				FB0C8D0A2280D8EA0056C79F /* SearchViewController.swift in Sources */,
@@ -435,6 +442,7 @@
 			files = (
 				FB2C593A2284F92B005052EF /* MovieTests.swift in Sources */,
 				FB2C59332283AA68005052EF /* NetworkConstantsTests.swift in Sources */,
+				FB5F4E7F228B6AD3002005D9 /* URLBuilderTests.swift in Sources */,
 				FB2C5792227E117000CA2381 /* LoginViewControllerTests.swift in Sources */,
 				FB2C5790227E0CF700CA2381 /* AppDelegateTests.swift in Sources */,
 				FBE106B5227F288F00F19952 /* MovieCellTests.swift in Sources */,

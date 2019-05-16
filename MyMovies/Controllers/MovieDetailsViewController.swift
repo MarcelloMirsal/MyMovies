@@ -152,8 +152,8 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         // MARK: textView
         contentsView.addSubview(textView)
         textView.setConstraint(for: textView.topAnchor, to: movieInfoStackView.bottomAnchor)
-        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor)
-        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor)
+        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 4)
+        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -4)
         textView.setConstraint(for: textView.bottomAnchor, to: contentsView.bottomAnchor)
         textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: 0)
         textViewHeightConstraint.isActive = true

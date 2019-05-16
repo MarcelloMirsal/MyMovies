@@ -20,7 +20,7 @@ class TodayHeader: UICollectionViewCell {
     
     let dateLabel: UILabel = {
         let label = UILabel()
-        label.text = "SUNDAY, MARCH 6"
+        label.text = Date().customDate(from: nil)
         label.font = UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)
         label.textColor = .lightGray
         return label

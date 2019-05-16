@@ -16,3 +16,19 @@ extension UIView {
         return constraint
     }
 }
+
+extension Date {
+     func customDate(from date: String?) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        if let stringDate = date {
+            let formattedDate = dateFormatter.date(from: stringDate)!
+            dateFormatter.dateFormat = "EEEE, MMMM, dd"
+            return dateFormatter.string(from: formattedDate)
+        } else {
+            dateFormatter.dateFormat = "EEEE, MMMM, dd"
+            return dateFormatter.string(from: self)
+        }
+    }
+}
