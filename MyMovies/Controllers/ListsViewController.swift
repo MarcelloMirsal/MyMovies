@@ -9,8 +9,7 @@
 import UIKit
 
 let cellID = "cellId"
-
-class ListsViewController: UITableViewController {
+class ListsViewController: UITableViewController, UITableViewDataSourcePrefetching {
     
     // MARK:- Properties
     var apiResponse: ApiResponse<Movie>!
@@ -45,10 +44,12 @@ class ListsViewController: UITableViewController {
         case .favorites:
             listType = type
             navigationItem.title = listType.rawValue
+            apiResponse = nil
             loadContents()
         case .watchList:
             listType = type
             navigationItem.title = listType.rawValue
+            apiResponse = nil
             loadContents()
         }
     }
@@ -63,7 +64,7 @@ class ListsViewController: UITableViewController {
         loadContents()
     }
     
-    // MARK: Handlers
+    // MARK:- Handlers
     @objc
     func handleListChange() {
         
@@ -88,7 +89,7 @@ class ListsViewController: UITableViewController {
     }
 }
 
-// MARK:- Extension To implement DataSource and delegate for tableView
+// MARK:- TableViewDataSource and Delegate Implementation
 
 extension ListsViewController {
     
@@ -115,19 +116,46 @@ extension ListsViewController {
     
 }
 
-// MARK:- Networking
+// MARK:- TableViewPrefetching Implementation
+extension ListsViewController {
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            let posterPathURL = apiResponse.results[indexPath.row].posterPath
+            guard let imageURL = URL(string: URLBuilder.url(for: .image, value: posterPathURL)) else {return}
+            UIImageView().af_setImage(withURL: imageURL) // to cache the image
+            if indexPath.row+1 == apiResponse.results.count {
+                print("Load More COntens")
+                loadContents()
+            }
+        }
+    }
+}
 
+// MARK:- Networking
 extension ListsViewController {
     
     func loadContents() {
-        apiResponse?.results.removeAll()
         self.tableView.reloadData()
         let listPath: NetworkConstants.ApiPaths = listType == .favorites ? .favoriteList : .watchList
-        NetworkManager().response(for: listPath) { (response) in
-            guard let data = response.data else { fatalError() }
-            guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
-            self.apiResponse = apiResponse
-            self.tableView.reloadData()
+        
+        if let _ = apiResponse {
+            NetworkManager().response(for: listPath, at: apiResponse.page+1) { (response) in
+                guard let data = response.data else { fatalError() }
+                guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
+                self.apiResponse.results += apiResponse.results
+                self.apiResponse.page = apiResponse.page
+                self.tableView.reloadData()
+            }
+        } else {
+            NetworkManager().response(for: listPath) { (response) in
+                guard let data = response.data else { fatalError() }
+                guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
+                self.apiResponse = apiResponse
+                self.tableView.reloadData()
+            }
         }
+        
+        
     }
 }

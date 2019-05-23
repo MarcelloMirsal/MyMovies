@@ -45,12 +45,13 @@ class TodayMoviesViewControllerTests: XCTestCase {
         XCTAssertNotNil(cell)
     }
     
-
+    func testCollectionViewPrefetchApi_ShouldBeEqualToSut(){
+        XCTAssertTrue(sut.collectionView.prefetchDataSource is TodayMoviesViewControllerMock)
+    }
+    
 }
 
 // MARK:- SUT Class Mock
-
-
 class TodayMoviesViewControllerMock: TodayMoviesViewController {
     
     let movieCellId = "MovieCell"

@@ -9,6 +9,7 @@
 import UIKit
 
 struct Movie: Codable {
+    
     let id: Int
     let title: String
     let posterPath: String
@@ -21,7 +22,7 @@ struct Movie: Codable {
 }
 
 struct ApiResponse<T: Codable>: Codable {
-    let page: Int
+    var page: Int
     let totalPages: Int
     var results: [T]
     

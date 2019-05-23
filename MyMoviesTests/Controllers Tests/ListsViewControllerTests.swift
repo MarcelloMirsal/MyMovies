@@ -31,5 +31,8 @@ class ListsViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.listType, UserList.favorites)
     }
     
+    func testTableViewPrefetchApi_ShouldBeEqualToSut(){
+        XCTAssertTrue(sut.tableView.prefetchDataSource is ListsViewController)
+    }
 
 }

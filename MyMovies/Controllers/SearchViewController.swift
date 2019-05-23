@@ -13,6 +13,8 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
     // MARK:- Properties
     var filteredMovies = [Movie]()
     
+    
+    // MARK:- UI Properties
     let searchController = UISearchController(searchResultsController: nil)
     
     // MARK:- Methods
@@ -42,17 +44,6 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
         tableView.reloadData()
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredMovies.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
-        let movie = filteredMovies[indexPath.row]
-        cell.textLabel?.text = movie.title
-        return cell
-    }
-    
     // MARK:- Life Cycle
     override func viewDidLoad() {
         setupAppearance()
@@ -73,6 +64,22 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
             }
         }
     }
+}
+
+
+// MARK:- UITableViewDataSource and Delegate Implementation
+extension SearchViewController {
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return filteredMovies.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
+        let movie = filteredMovies[indexPath.row]
+        cell.textLabel?.text = movie.title
+        return cell
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let movie = filteredMovies[indexPath.row]
@@ -81,13 +88,12 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
         present(movieDetailsViewController
             , animated: true, completion: nil)
     }
-    
 }
 
-// MARK:- UISearchResultsUpdating protocol
-
+// MARK:- UISearchResultsUpdating Implementation
 extension SearchViewController {
     func updateSearchResults(for searchController: UISearchController) {
+        // TODO: Bug when searching for movie if name > 3 letters
         if searchBarIsEmpty() {
             filteredMovies.removeAll()
             tableView.reloadData()

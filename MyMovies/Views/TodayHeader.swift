@@ -10,7 +10,7 @@ import UIKit
 
 class TodayHeader: UICollectionViewCell {
     
-    // MARK:- Properties
+    // MARK:- UI Properties
     let todayLabel: UILabel = {
         let label = UILabel()
         label.text = "Today"
@@ -26,10 +26,18 @@ class TodayHeader: UICollectionViewCell {
         return label
     }()
     
+    // MARK:- Life Cycle
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        backgroundColor = .clear
+        setupViews()
+    }
     
-    // MARK:- Methods
+}
+
+//MARK:- Auto Layout Implementation
+extension TodayHeader {
     func setupViews(){
-        //MARK:- Auto Layout
         
         //MARK: todayLabel
         addSubview(todayLabel)
@@ -40,17 +48,10 @@ class TodayHeader: UICollectionViewCell {
         
         //MARK: dateLabel
         addSubview(dateLabel)
-        dateLabel.setConstraint(for: dateLabel.topAnchor, to: topAnchor)
+        dateLabel.setConstraint(for: dateLabel.topAnchor, to: topAnchor, constant: 4)
         dateLabel.setConstraint(for: dateLabel.leadingAnchor, to: leadingAnchor)
         dateLabel.setConstraint(for: dateLabel.trailingAnchor, to: trailingAnchor)
         dateLabel.heightAnchor.constraint(equalToConstant: 24)
-    }
-    
-    // MARK:- Life Cycle
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        backgroundColor = .clear
-        setupViews()
     }
     
 }

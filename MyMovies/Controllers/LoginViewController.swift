@@ -12,7 +12,6 @@ import Alamofire
 class LoginViewController: UIViewController {
     
     // MARK:- UI Properties
-    
     let usernameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Username"
@@ -44,16 +43,7 @@ class LoginViewController: UIViewController {
         loginButton.addTarget(self, action: #selector(loginHandler(button:)), for: .touchUpInside)
     }
     
-    // MARK:- Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupAppearance()
-        setupLayout()
-        setupHandlers()
-    }
-    
-    //MARK:- Handlers
-    fileprivate func presentTabBarViewController() {
+    func presentTabBarViewController() {
         let todayViewController = TodayMoviesViewController()
         let listsViewController = ListsViewController()
         let searchViewController = SearchViewController()
@@ -72,9 +62,17 @@ class LoginViewController: UIViewController {
         present(tabBarController, animated: true, completion: nil)
     }
     
+    // MARK:- Life Cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupAppearance()
+        setupViews()
+        setupHandlers()
+    }
+    
+    //MARK:- Handlers && Login Networking
     @objc
     private func loginHandler(button: UIButton) {
-        
         NetworkManager().session(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
             if isSuccedd && error == nil {
                 self.presentTabBarViewController()
@@ -85,12 +83,11 @@ class LoginViewController: UIViewController {
     }
 }
 
-
+//MARK: Auto Layout Implementation
 extension LoginViewController {
-    //MARK: Auto Layout
-    func setupLayout(){
-        // MARK: usernameTextField
+    func setupViews(){
         
+        // MARK: usernameTextField
         view.addSubview(usernameTextField)
         usernameTextField.setConstraint(for: usernameTextField.topAnchor, to: view.safeAreaLayoutGuide.topAnchor, constant: 32)
         usernameTextField.setConstraint(for: usernameTextField.leadingAnchor, to: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)
@@ -98,7 +95,6 @@ extension LoginViewController {
         usernameTextField.heightAnchor.constraint(equalToConstant: 32).isActive = true
         
         // MARK: passwordTextField
-        
         view.addSubview(passwordTextField)
         passwordTextField.setConstraint(for: passwordTextField.topAnchor, to: usernameTextField.bottomAnchor,constant: 8)
         passwordTextField.setConstraint(for: passwordTextField.leadingAnchor, to: view.safeAreaLayoutGuide.leadingAnchor, constant: 16)

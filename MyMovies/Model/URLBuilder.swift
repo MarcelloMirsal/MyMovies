@@ -12,12 +12,14 @@ class URLBuilder {
     
     class func url(for path: NetworkConstants.ApiPaths, at pageNumber: Int = 1, value: String = "") -> String {
         
+        var urlComponents = URLComponents()
+        urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
+        urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
+        urlComponents.path = NetworkConstants.ApiKeys.version.rawValue
+        
         switch path {
         case .todayMovies:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.todayMovies.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
                 NetworkConstants.ApiQueryItems.query(for: .language),
@@ -32,10 +34,7 @@ class URLBuilder {
             urlComponents.path = NetworkConstants.ApiPaths.image.rawValue + value
             return urlComponents.string!
         case .search:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.search.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
                 NetworkConstants.ApiQueryItems.query(for: .language),
@@ -44,37 +43,25 @@ class URLBuilder {
             ]
             return urlComponents.string!
         case .requestToken:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.requestToken.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
             ]
             return urlComponents.string!
         case .tokenValidation:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.tokenValidation.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
             ]
             return urlComponents.string!
         case .session:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + NetworkConstants.ApiPaths.session.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
             ]
             return urlComponents.string!
         case .favoriteList:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId ?? 0 )")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
@@ -85,10 +72,7 @@ class URLBuilder {
             ]
             return urlComponents.string!
         case .watchList:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
@@ -99,20 +83,14 @@ class URLBuilder {
             ]
             return urlComponents.string!
         case .userDetails:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
                 NetworkConstants.ApiQueryItems.query(for: .sessionId)
             ]
             return urlComponents.string!
         case .markFavorite:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
@@ -120,10 +98,7 @@ class URLBuilder {
             ]
             return urlComponents.string!
         case .markWatchlist:
-            var urlComponents = URLComponents()
-            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
-            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
-            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path += path.rawValue
             urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),

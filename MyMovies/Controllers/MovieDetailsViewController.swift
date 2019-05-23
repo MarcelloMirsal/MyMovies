@@ -13,8 +13,36 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     // MARK:- Properties
     var movie: Movie?
+    
     let networkManager = NetworkManager()
     
+    var isFavorited: Bool {
+        if favoriteButton.tintColor == .black {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    var isWatchlisted: Bool {
+        if watchListButton.tintColor == .black {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    var textViewHeightConstraint = NSLayoutConstraint()
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    
+    // MARK:- UI Properties
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -46,7 +74,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         textView.font = UIFont(name: "Avenir-Medium", size: 18)
         textView.isScrollEnabled = false
         textView.isUserInteractionEnabled = false
-        
         return textView
     }()
     
@@ -60,6 +87,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         favoriteButton.tintColor = .black
         return favoriteButton
     }()
+    
     let watchListButton: UIButton = {
         let watchListButton = UIButton()
         watchListButton.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +95,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         watchListButton.tintColor = .black
         return watchListButton
     }()
+    
     let playButton: UIButton = {
         let playButton = UIButton()
         playButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -83,101 +112,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         return stackView
     }()
     
-    var isFavorited: Bool {
-        if favoriteButton.tintColor == .black {
-            return false
-        } else {
-            return true
-        }
-    }
-    var isWatchlisted: Bool {
-        if watchListButton.tintColor == .black {
-            return false
-        } else {
-            return true
-        }
-    }
-    
-    var textViewHeightConstraint = NSLayoutConstraint()
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
-    
     // MARK:- Methods
-    func setupViews(){
-        // MARK:- Auto Layout
-        
-        
-        // MARK: scrollView
-        view.addSubview(scrollView)
-        scrollView.setConstraint(for: scrollView.topAnchor, to: view.topAnchor)
-        scrollView.setConstraint(for: scrollView.leadingAnchor, to: view.leadingAnchor)
-        scrollView.setConstraint(for: scrollView.trailingAnchor, to: view.trailingAnchor)
-        scrollView.setConstraint(for: scrollView.bottomAnchor, to: view.bottomAnchor)
-        
-        
-        //MARK: dismissButtonVisualEffect
-        dismissButtonEffect = setupDismissButtonVisualEffect()
-        view.addSubview(dismissButtonEffect)
-        dismissButtonEffect.setConstraint(for: dismissButtonEffect.topAnchor, to: view.safeAreaLayoutGuide.topAnchor,constant: 16)
-        dismissButtonEffect.setConstraint(for: dismissButtonEffect.trailingAnchor, to: view.trailingAnchor,constant: -16)
-        dismissButtonEffect.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        dismissButtonEffect.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        //MARK: dismissButton
-        dismissButtonEffect.contentView.addSubview(dismissButton)
-        dismissButton.setConstraint(for: dismissButton.leadingAnchor, to: dismissButtonEffect.contentView.leadingAnchor)
-        dismissButton.setConstraint(for: dismissButton.trailingAnchor, to: dismissButtonEffect.contentView.trailingAnchor)
-        dismissButton.setConstraint(for: dismissButton.topAnchor, to: dismissButtonEffect.contentView.topAnchor)
-        dismissButton.setConstraint(for: dismissButton.bottomAnchor, to: dismissButtonEffect.contentView.bottomAnchor)
-    }
-    
-    func setupScrollView() {
-        scrollView.delegate = self
-        // MARK:- contentsView setup
-        scrollView.addSubview(contentsView)
-        contentsView.setConstraint(for: contentsView.topAnchor, to: scrollView.topAnchor)
-        contentsView.setConstraint(for: contentsView.leadingAnchor, to: scrollView.leadingAnchor)
-        contentsView.setConstraint(for: contentsView.trailingAnchor, to: scrollView.trailingAnchor)
-        contentsView.setConstraint(for: contentsView.bottomAnchor, to: scrollView.bottomAnchor)
-        let heightConstraint = contentsView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
-        heightConstraint.priority = .defaultLow
-        heightConstraint.isActive = true
-        contentsView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
-        
-        // MARK: posterImageView
-        contentsView.addSubview(posterImageView)
-        posterImageView.setConstraint(for: posterImageView.topAnchor, to: contentsView.topAnchor)
-        posterImageView.setConstraint(for: posterImageView.leadingAnchor, to: contentsView.leadingAnchor)
-        posterImageView.setConstraint(for: posterImageView.trailingAnchor, to: contentsView.trailingAnchor)
-        // ratio 16:9
-        let width = view.frame.width
-        let height = width * 4 / 3
-        posterImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
-        
-        // MARK: movieInfoStackView
-        contentsView.addSubview(movieInfoStackView)
-        movieInfoStackView.setConstraint(for: movieInfoStackView.topAnchor, to: posterImageView.bottomAnchor)
-        movieInfoStackView.setConstraint(for: movieInfoStackView.leadingAnchor, to: posterImageView.leadingAnchor)
-        movieInfoStackView.setConstraint(for: movieInfoStackView.trailingAnchor, to: posterImageView.trailingAnchor)
-        movieInfoStackView.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        
-        
-        // MARK: textView
-        contentsView.addSubview(textView)
-        textView.setConstraint(for: textView.topAnchor, to: movieInfoStackView.bottomAnchor)
-        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 16)
-        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -16)
-        textView.setConstraint(for: textView.bottomAnchor, to: contentsView.bottomAnchor)
-        textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: 0)
-        textViewHeightConstraint.isActive = true
-    }
-    
     func setupDismissButton(){
         dismissButton.addTarget(self, action: #selector(handleDismiss), for: .touchUpInside)
     }
@@ -224,18 +159,18 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         setupTextView()
     }
     
+    func setupAppearance() {
+        view.backgroundColor = .white
+    }
+    
     // MARK:- Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
-        setupDismissButton()
-        setupScrollView()
         setupViews()
+        setupAppearance()
+        setupDismissButton()
         setupHandlers()
         presentContents()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     //MARK:- Handlers
@@ -243,6 +178,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     func handleDismiss(){
         dismiss(animated: true, completion: nil)
     }
+    
     @objc
     func handleFavorite(){
         guard let movie = self.movie else {return}
@@ -267,6 +203,85 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         }
     }
     
+}
+
+
+// MARK:- Auto Layout Implementation
+extension MovieDetailsViewController {
+    
+    func setupViews(){
+        // MARK: scrollView
+        view.addSubview(scrollView)
+        scrollView.setConstraint(for: scrollView.topAnchor, to: view.topAnchor)
+        scrollView.setConstraint(for: scrollView.leadingAnchor, to: view.leadingAnchor)
+        scrollView.setConstraint(for: scrollView.trailingAnchor, to: view.trailingAnchor)
+        scrollView.setConstraint(for: scrollView.bottomAnchor, to: view.bottomAnchor)
+        setupScrollView()
+        
+        
+        //MARK: dismissButtonVisualEffect
+        dismissButtonEffect = setupDismissButtonVisualEffect()
+        view.addSubview(dismissButtonEffect)
+        dismissButtonEffect.setConstraint(for: dismissButtonEffect.topAnchor, to: view.safeAreaLayoutGuide.topAnchor,constant: 16)
+        dismissButtonEffect.setConstraint(for: dismissButtonEffect.trailingAnchor, to: view.trailingAnchor,constant: -16)
+        dismissButtonEffect.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        dismissButtonEffect.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        //MARK: dismissButton
+        dismissButtonEffect.contentView.addSubview(dismissButton)
+        dismissButton.setConstraint(for: dismissButton.leadingAnchor, to: dismissButtonEffect.contentView.leadingAnchor)
+        dismissButton.setConstraint(for: dismissButton.trailingAnchor, to: dismissButtonEffect.contentView.trailingAnchor)
+        dismissButton.setConstraint(for: dismissButton.topAnchor, to: dismissButtonEffect.contentView.topAnchor)
+        dismissButton.setConstraint(for: dismissButton.bottomAnchor, to: dismissButtonEffect.contentView.bottomAnchor)
+    }
+    
+    func setupScrollView() {
+        scrollView.delegate = self
+        // MARK: contentsView setup
+        scrollView.addSubview(contentsView)
+        contentsView.setConstraint(for: contentsView.topAnchor, to: scrollView.topAnchor)
+        contentsView.setConstraint(for: contentsView.leadingAnchor, to: scrollView.leadingAnchor)
+        contentsView.setConstraint(for: contentsView.trailingAnchor, to: scrollView.trailingAnchor)
+        contentsView.setConstraint(for: contentsView.bottomAnchor, to: scrollView.bottomAnchor)
+        let heightConstraint = contentsView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        heightConstraint.priority = .defaultLow
+        heightConstraint.isActive = true
+        contentsView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        
+        // MARK: posterImageView
+        contentsView.addSubview(posterImageView)
+        posterImageView.setConstraint(for: posterImageView.topAnchor, to: contentsView.topAnchor)
+        posterImageView.setConstraint(for: posterImageView.leadingAnchor, to: contentsView.leadingAnchor)
+        posterImageView.setConstraint(for: posterImageView.trailingAnchor, to: contentsView.trailingAnchor)
+        // ratio 16:9
+        let width = view.frame.width
+        let height = width * 4 / 3
+        posterImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        
+        // MARK: movieInfoStackView
+        contentsView.addSubview(movieInfoStackView)
+        movieInfoStackView.setConstraint(for: movieInfoStackView.topAnchor, to: posterImageView.bottomAnchor)
+        movieInfoStackView.setConstraint(for: movieInfoStackView.leadingAnchor, to: posterImageView.leadingAnchor)
+        movieInfoStackView.setConstraint(for: movieInfoStackView.trailingAnchor, to: posterImageView.trailingAnchor)
+        movieInfoStackView.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        
+        
+        // MARK: textView
+        contentsView.addSubview(textView)
+        textView.setConstraint(for: textView.topAnchor, to: movieInfoStackView.bottomAnchor)
+        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 16)
+        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -16)
+        textView.setConstraint(for: textView.bottomAnchor, to: contentsView.bottomAnchor)
+        textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: 0)
+        textViewHeightConstraint.isActive = true
+    }
+}
+
+
+// MARK:- ScrollViewDelegate Implementation
+extension MovieDetailsViewController {
+    
+    ///This method used to change dismissButton blur effect when scrolling to movie info.
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let safeAreaHeight = scrollView.safeAreaInsets.top
         let dismissButtonTopSpace: CGFloat = 16
@@ -280,5 +295,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
             dismissButton.setTitleColor(.black, for: .normal)
         }
     }
+    
     
 }

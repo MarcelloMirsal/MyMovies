@@ -10,7 +10,7 @@ import UIKit
 
 class MovieCell: UICollectionViewCell {
     
-    // MARK:- Properties
+    // MARK:- UI Properties
     let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Creed II"
@@ -44,9 +44,36 @@ class MovieCell: UICollectionViewCell {
     
     let gradientLayer = CAGradientLayer()
     
+    
     // MARK:- Methods
+    func setupGradientLayer() {
+        gradientLayer.colors = [ UIColor.black.cgColor, UIColor.clear.cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
+        gradientLayer.locations = [ 0 , 0.4 , 1 ]
+        layer.insertSublayer(gradientLayer, above: posterImageView.layer)
+        gradientLayer.frame = bounds
+    }
+    
+    func setupCellShadow(){
+        self.layer.shadowColor = UIColor.lightGray.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 20)
+        self.layer.shadowOpacity = 1
+        self.layer.shadowRadius = 25
+    }
+    
+    // MARK:- Life Cycle
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        setupViews()
+        setupGradientLayer()
+        setupCellShadow()
+    }
+}
+
+// MARK:- Auto Layout Implementation
+extension MovieCell {
     func setupViews(){
-        // MARK:- Auto Layout
         
         // MARK: posterImageView
         addSubview(posterImageView)
@@ -76,32 +103,4 @@ class MovieCell: UICollectionViewCell {
         genreLabel.setConstraint(for: genreLabel.trailingAnchor, to: trailingAnchor)
         genreLabel.heightAnchor.constraint(equalToConstant: 16).isActive = true
     }
-    
-    func setupGradientLayer() {
-        gradientLayer.colors = [ UIColor.black.cgColor, UIColor.clear.cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1)
-        gradientLayer.locations = [ 0 , 0.4 , 1 ]
-        layer.insertSublayer(gradientLayer, above: posterImageView.layer)
-        gradientLayer.frame = bounds
-    }
-    
-    func setupCellShadow(){
-        self.layer.shadowColor = UIColor.lightGray.cgColor
-        self.layer.shadowOffset = CGSize(width: 0, height: 20)
-        self.layer.shadowOpacity = 1
-        self.layer.shadowRadius = 25
-    }
-    
-    
-    // MARK:- Life Cycle
-    override func didMoveToWindow() {
-        super.didMoveToWindow()
-        setupViews()
-        setupGradientLayer()
-        setupCellShadow()
-    }
-    
-    
-    
 }

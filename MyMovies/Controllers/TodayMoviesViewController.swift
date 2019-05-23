@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import AlamofireImage
 
 let movieCellId = "movieCell"
 let headerId = "headerId"
 
-class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDataSourcePrefetching {
+    
     
     // MARK:- Properties
     let contentSpacing: CGFloat = 16
@@ -28,6 +30,8 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     
     var apiResponse: ApiResponse<Movie>!
     
+    let networkManager = NetworkManager()
+    
     // MARK:- UI Properties
     let collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
@@ -40,13 +44,14 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     func setupAppearance(){
         view.backgroundColor = .white
     }
+    
     func setupCollectionView() {
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.prefetchDataSource = self
         collectionView.register(MovieCell.self, forCellWithReuseIdentifier: movieCellId)
         collectionView.register(TodayHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView.contentInset = UIEdgeInsets(top: 0, left: contentSpacing, bottom: 0, right: contentSpacing)
-        collectionView.panGestureRecognizer.addTarget(self, action: #selector(handle(gesture:)))
     }
     
     func updateStatusBarAppearance(isHidden : Bool) {
@@ -68,37 +73,11 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         super.viewWillAppear(animated)
         updateStatusBarAppearance(isHidden: false)
     }
-    
-    
-    // MARK:- Handlers
-    // Bouncing animation when draggin cell for scrolling action
-    @objc
-    func handle(gesture:UIPanGestureRecognizer){
-        /* let cellLocation = gesture.location(in: collectionView)
-        switch gesture.state {
-        case .began:
-            for cell in collectionView.visibleCells {
-                if cell.frame.contains(cellLocation) {
-                    UIView.animateKeyframes(withDuration: 0.75, delay: 0, options: [], animations: {
-                        UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.5, animations: {
-                            cell.transform = CGAffineTransform(scaleX: 0.98, y: 0.98)
-                        })
-                        UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 1, animations: {
-                            cell.transform = CGAffineTransform.identity
-                        })
-                    }, completion: nil)
-                }
-            }
-        default:
-            break
-        } */
-    }
 
 }
 
 
-// MARK:- Auto Layout
-
+// MARK:- Auto Layout Implementation
 extension TodayMoviesViewController {
     
     func setupViews(){
@@ -112,8 +91,7 @@ extension TodayMoviesViewController {
     }
 }
 
-// MARK:- Implementing CollectionView DataSource and Delegate
-
+// MARK:- CollectionView DataSource and Delegate Implementation
 extension TodayMoviesViewController {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -127,7 +105,6 @@ extension TodayMoviesViewController {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieCellId, for: indexPath) as! MovieCell
         let movie = apiResponse.results[indexPath.row]
-        
         cell.titleLabel.text = movie.title
         cell.dateLabel.text = Date().customDate(from: movie.releaseDate)
         cell.posterImageView.image = nil
@@ -136,6 +113,7 @@ extension TodayMoviesViewController {
         cell.posterImageView.af_setImage(withURL: posterURL)
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath)
         return header
@@ -143,6 +121,7 @@ extension TodayMoviesViewController {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width - (contentSpacing * 2)
+        // Aspect Ratio 4:3
         let height = width * 4 / 3
         return CGSize(width: width, height: height)
     }
@@ -156,7 +135,7 @@ extension TodayMoviesViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 70)
+        return CGSize(width: collectionView.frame.width, height: 72)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -167,17 +146,47 @@ extension TodayMoviesViewController {
     }
 }
 
+// MARK:- CollectionViewPrefetching Implementation
+extension TodayMoviesViewController {
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            let posterPathURL = apiResponse.results[indexPath.row].posterPath
+            guard let imageURL = URL(string: URLBuilder.url(for: .image, value: posterPathURL)) else {return}
+            UIImageView().af_setImage(withURL: imageURL) // to cache the image
+            if indexPath.row+1 == apiResponse.results.count {
+                print("Load More COntens")
+                loadContents()
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        
+    }
+}
+
 
 // MARK:- Networking
 
 extension TodayMoviesViewController {
 
     func loadContents() {
-        NetworkManager().response(for: .todayMovies) { (response) in
+        if let _ = apiResponse {
+            networkManager.response(for: .todayMovies, at: apiResponse.page+1) { (response) in
+                guard let data = response.data else { fatalError() }
+                guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
+                self.apiResponse.results += apiResponse.results
+                self.apiResponse.page = apiResponse.page
+                self.collectionView.reloadData()
+            }
+        } else {
+        networkManager.response(for: .todayMovies) { (response) in
             guard let data = response.data else { fatalError() }
             guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
             self.apiResponse = apiResponse
             self.collectionView.reloadData()
+            }
         }
     }
 }

@@ -56,6 +56,7 @@ class NetworkManager {
     func session(username: String, password: String, completion: @escaping (_ isValidated: Bool,_ error: RequestError?) -> () ) {
         Alamofire.request(URLBuilder.url(for: .requestToken)).responseData { (tokenResponse) in
             // MARK: create request token
+            let jsonDecoder = JSONDecoder()
             if let _ = tokenResponse.error {
                 completion(false, .noResponse)
                 return
@@ -64,7 +65,7 @@ class NetworkManager {
                 completion(false, .dataUnwrapping)
                 return
             }
-            guard let requestToken = try? JSONDecoder().decode(RequestToken.self, from: tokenData) else {
+            guard let requestToken = try? jsonDecoder.decode(RequestToken.self, from: tokenData) else {
                 completion(false, .dataDecoding)
                 return
             }
@@ -85,7 +86,7 @@ class NetworkManager {
                     completion(false, .dataUnwrapping)
                     return
                 }
-                guard let validatedRequestToken = try? JSONDecoder().decode(RequestToken.self, from: validationData) else {
+                guard let validatedRequestToken = try? jsonDecoder.decode(RequestToken.self, from: validationData) else {
                     completion(false, .dataDecoding)
                     return
                 }
@@ -101,7 +102,7 @@ class NetworkManager {
                         completion(false, .dataUnwrapping)
                         return
                     }
-                    guard let validatedSession = try? JSONDecoder().decode(UserSession.self, from: sessionData) else {
+                    guard let validatedSession = try? jsonDecoder.decode(UserSession.self, from: sessionData) else {
                         completion(false, .dataDecoding)
                         return
                     }
@@ -139,7 +140,6 @@ class NetworkManager {
      ## Important Notes ##
      * the completion block just returns the data response without checking for errors.
      */
-    
     func response(imagePath: String, completion: @escaping (_ dataResponse: DataResponse<UIImage>) -> ()) {
         Alamofire.request(URLBuilder.url(for: .image, value: imagePath)).responseImage { (dataResponse) in
             completion(dataResponse)
