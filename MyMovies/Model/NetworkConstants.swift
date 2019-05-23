@@ -66,10 +66,16 @@ final class NetworkConstants {
         case favoriteList = "/account/{account_id}/favorite/movies"
         case watchList = "/account/{account_id}/watchlist/movies"
         case userDetails = "/account"
-        
+        case markFavorite = "/account/{account_id}/favorite"
+        case markWatchlist = "/account/{account_id}/watchlist"
     }
 
     
+}
+
+enum UserList: String {
+    case favorites = "Favorites"
+    case watchList = "Watchlist"
 }
 
 

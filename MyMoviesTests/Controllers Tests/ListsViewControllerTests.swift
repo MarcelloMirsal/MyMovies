@@ -12,8 +12,12 @@ import XCTest
 class ListsViewControllerTests: XCTestCase {
 
     var sut: ListsViewController!
+    
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        NetworkManager.validatedRequestToken = RequestToken(success: true, expires_at: "2020", request_token: "12345678987654321")
+        NetworkManager.userSession = UserSession(success: true, session_id: "98765432123456789")
+        NetworkManager.userId = 1234567899
         sut = ListsViewController()
         _ = sut.view
     }
@@ -23,8 +27,8 @@ class ListsViewControllerTests: XCTestCase {
     }
     
     // MARK:- test properties
-    func testSut_ListTypeShouldBeFavorites() {
-        XCTAssertEqual(sut.listType, ListsViewController.List.favorites)
+    func testSut_ListTypeShouldBeFavoritesWhenLoading() {
+        XCTAssertEqual(sut.listType, UserList.favorites)
     }
     
 

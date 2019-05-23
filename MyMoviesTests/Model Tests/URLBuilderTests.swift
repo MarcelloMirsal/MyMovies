@@ -81,4 +81,16 @@ class URLBuilderTests: XCTestCase {
         XCTAssertEqual(optimalURL, url)
     }
     
+    func testURLBuilder_MarkFavoritePathURLShouldBeEqual() {
+        let optimalURL = "https://api.themoviedb.org/3/account/\(NetworkManager.userId!)/favorite?api_key=\(NetworkConstants.ApiKeys.api.rawValue)&session_id=\(NetworkManager.userSession.session_id)"
+        let url = URLBuilder.url(for: .markFavorite)
+        XCTAssertEqual(optimalURL, url)
+    }
+    
+    func testURLBuilder_MarkWatchlistPathURLShouldBeEqual() {
+        let optimalURL = "https://api.themoviedb.org/3/account/\(NetworkManager.userId!)/watchlist?api_key=\(NetworkConstants.ApiKeys.api.rawValue)&session_id=\(NetworkManager.userSession.session_id)"
+        let url = URLBuilder.url(for: .markWatchlist)
+        XCTAssertEqual(optimalURL, url)
+    }
+    
 }

@@ -24,10 +24,10 @@ extension Date {
         
         if let stringDate = date {
             let formattedDate = dateFormatter.date(from: stringDate)!
-            dateFormatter.dateFormat = "EEEE, MMMM, dd"
+            dateFormatter.dateFormat = "MMMM d, yyyy"
             return dateFormatter.string(from: formattedDate)
         } else {
-            dateFormatter.dateFormat = "EEEE, MMMM, dd"
+            dateFormatter.dateFormat = "MMMM d, yyyy"
             return dateFormatter.string(from: self)
         }
     }

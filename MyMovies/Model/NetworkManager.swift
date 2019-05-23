@@ -95,10 +95,7 @@ class NetworkManager {
                 let userSessionParams = [NetworkConstants.ApiQueryItems.requestToken.rawValue: NetworkManager.validatedRequestToken.request_token]
                 
                 Alamofire.request(URLBuilder.url(for: .session), method: .post, parameters: userSessionParams, encoding: JSONEncoding.default, headers: nil).responseData(completionHandler: { (sessionDataResponse) in
-                    if let _ = sessionDataResponse.error {
-                        completion(false, .noResponse)
-                        return
-                    }
+                    
                     
                     guard let sessionData = sessionDataResponse.data else {
                         completion(false, .dataUnwrapping)
@@ -124,6 +121,7 @@ class NetworkManager {
                         NetworkManager.userId = (userDict["id"] as! Int)
                         print(NetworkManager.validatedRequestToken.request_token)
                         print(NetworkManager.userSession.session_id)
+                        print(NetworkManager.userId!)
                         completion(NetworkManager.userSession.success,nil)
                     }) // end of user details request
                 }) // end of user session request
@@ -148,6 +146,55 @@ class NetworkManager {
         }
     }
     
+    
+    
+    
+    /**
+     Get a data response from API.
+     
+     - Parameter apiPath: the path of requested content.
+     - Parameter page: number of page for results.
+     - Parameter value: a special parameter used only to set search query, image path.
+     - Parameter completion: a block object executed when request ends.
+     - Parameter dataResponse: the returned response from request
+     ## Important Notes ##
+     * the completion block just returns the data response without checking for errors.
+     
+     */
+    func mark(_ mediaId: String, in list: UserList, with isListed: Bool, completion: @escaping (_ isCompleted: Bool , _ error: RequestError?) -> () ) {
+        let listPath: NetworkConstants.ApiPaths = list == .favorites ? .markFavorite : .markWatchlist
+        let url = URLBuilder.url(for: listPath)
+        let listKey = list == .favorites ? "favorite" : "watchlist"
+        let params: [String : Any] = [
+            "media_type": "movie",
+            "media_id": mediaId,
+            listKey : isListed
+        ]
+        Alamofire.request(url, method: .post, parameters: params, encoding: JSONEncoding.default, headers: nil).responseJSON { (dataResponse) in
+            if let _ = dataResponse.error {
+                completion(false, .noResponse)
+                return
+            }
+            
+            guard let data = dataResponse.data else {
+                completion(false, .dataUnwrapping)
+                return
+            }
+            
+            guard let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? Dictionary<String,Any> else {
+                completion(false, .markListDictDecoding)
+                return
+            }
+            guard let _: Int = responseDict["status_code"] as? Int, let _: String = responseDict["status_message"] as? String else {
+                completion(false, .markListDictDecoding)
+                return
+            }
+            completion(true, nil)
+        }
+        
+    }
+    
+    
     init() {
         
     }
@@ -160,6 +207,7 @@ enum RequestError: Error {
     case dataDecoding
     case sessionDenied
     case userDetailsDecoding
+    case markListDictDecoding
     
     var localizedDescription: String {
         switch self {
@@ -173,6 +221,8 @@ enum RequestError: Error {
             return "Session is not validated, try again"
         case .userDetailsDecoding:
             return "Failed to get user details"
+        case .markListDictDecoding:
+            return "Failed to get list dict"
         }
     }
 }

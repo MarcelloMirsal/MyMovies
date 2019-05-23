@@ -13,14 +13,7 @@ let headerId = "headerId"
 
 class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    // MARK:- UI Properties
-    let collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collectionView.backgroundColor = .white
-        return collectionView
-    }()
-    
+    // MARK:- Properties
     let contentSpacing: CGFloat = 16
     
     var statusBarAppearanceIsHidden = false
@@ -34,6 +27,14 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
     }
     
     var apiResponse: ApiResponse<Movie>!
+    
+    // MARK:- UI Properties
+    let collectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.backgroundColor = .white
+        return collectionView
+    }()
     
     // MARK:- Methods
     func setupAppearance(){

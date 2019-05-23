@@ -11,7 +11,7 @@ import XCTest
 
 class NetworkManagerTests: XCTestCase {
 
-    var sut = NetworkManager()
+    var sut = NetworkManagerMock()
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -68,4 +68,57 @@ class NetworkManagerTests: XCTestCase {
             XCTAssertNil(error)
         }
     }
+    
+    func testSut_MarkMediaInListResponseWithoutErrors(){
+        let exp = expectation(description: "Post Movie To List")
+        
+        sut.mark("12345", in: .favorites, with: true) { (isCompleted, error) in
+            XCTAssertNil(error)
+            XCTAssertTrue(isCompleted)
+            exp.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (error) in
+            XCTAssertNil(error)
+        }
+    }
 }
+
+
+// MARK:- class mock
+
+class NetworkManagerMock: NetworkManager {
+    override init() {
+        NetworkManager.validatedRequestToken = RequestToken(success: true, expires_at: "2020", request_token: "12345678987654321")
+        NetworkManager.userSession = UserSession(success: true, session_id: "98765432123456789")
+        NetworkManager.userId = 1234567899
+    }
+    
+    override func mark(_ mediaId: String, in list: UserList, with isListed: Bool, completion: @escaping (Bool, RequestError?) -> ()) {
+        
+        let responseJSONString = """
+{
+  "status_code": 12,
+  "status_message": "The item/record was updated successfully."
+}
+"""
+        
+        guard let data = responseJSONString.data(using: .utf8) else {
+            completion(false, .dataUnwrapping)
+            return
+        }
+        
+        guard let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? Dictionary<String,Any> else {
+            completion(false, .markListDictDecoding)
+            return
+        }
+        guard let x : Int = responseDict["status_code"] as? Int, let _: String = responseDict["status_message"] as? String else {
+            completion(false, .markListDictDecoding)
+            return
+        }
+        print(x)
+        completion(true, nil)
+    }
+
+}
+

@@ -79,6 +79,16 @@ class NetworkConstantsTests: XCTestCase {
         XCTAssertEqual(NetworkConstants.ApiPaths.watchList.rawValue, optimalURL )
     }
     
+    func testApiPath_MarkFavoriteShouldBeEqual(){
+        let optimalURL = "/account/{account_id}/favorite"
+        XCTAssertEqual(NetworkConstants.ApiPaths.markFavorite.rawValue, optimalURL )
+    }
+    
+    func testApiPath_MarkWatchlistShouldBeEqual(){
+        let optimalURL = "/account/{account_id}/watchlist"
+        XCTAssertEqual(NetworkConstants.ApiPaths.markWatchlist.rawValue, optimalURL )
+    }
+    
     
     
     

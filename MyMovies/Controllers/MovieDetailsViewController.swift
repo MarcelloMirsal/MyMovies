@@ -13,6 +13,8 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     // MARK:- Properties
     var movie: Movie?
+    let networkManager = NetworkManager()
+    
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -53,14 +55,16 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     let favoriteButton: UIButton = {
         let favoriteButton = UIButton()
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
-        favoriteButton.setImage(#imageLiteral(resourceName: "star"), for: .normal)
+        favoriteButton.setImage(#imageLiteral(resourceName: "star").withRenderingMode(.alwaysTemplate), for: .normal)
         favoriteButton.clipsToBounds = true
+        favoriteButton.tintColor = .black
         return favoriteButton
     }()
     let watchListButton: UIButton = {
         let watchListButton = UIButton()
-        watchListButton.setImage(#imageLiteral(resourceName: "Watchlist"), for: .normal)
         watchListButton.translatesAutoresizingMaskIntoConstraints = false
+        watchListButton.setImage(#imageLiteral(resourceName: "Watchlist").withRenderingMode(.alwaysTemplate), for: .normal)
+        watchListButton.tintColor = .black
         return watchListButton
     }()
     let playButton: UIButton = {
@@ -78,6 +82,21 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         stackView.spacing = 0
         return stackView
     }()
+    
+    var isFavorited: Bool {
+        if favoriteButton.tintColor == .black {
+            return false
+        } else {
+            return true
+        }
+    }
+    var isWatchlisted: Bool {
+        if watchListButton.tintColor == .black {
+            return false
+        } else {
+            return true
+        }
+    }
     
     var textViewHeightConstraint = NSLayoutConstraint()
     
@@ -152,8 +171,8 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         // MARK: textView
         contentsView.addSubview(textView)
         textView.setConstraint(for: textView.topAnchor, to: movieInfoStackView.bottomAnchor)
-        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 4)
-        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -4)
+        textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 16)
+        textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -16)
         textView.setConstraint(for: textView.bottomAnchor, to: contentsView.bottomAnchor)
         textViewHeightConstraint = textView.heightAnchor.constraint(equalToConstant: 0)
         textViewHeightConstraint.isActive = true
@@ -193,6 +212,17 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         textViewHeightConstraint.constant = estimatedTextSize.height
     }
     
+    func setupHandlers() {
+        favoriteButton.addTarget(self, action: #selector(handleFavorite), for: .touchUpInside)
+        watchListButton.addTarget(self, action: #selector(handleWatchlist), for: .touchUpInside)
+    }
+    
+    func presentContents() {
+        guard let movie = self.movie else {return}
+        guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
+        posterImageView.af_setImage(withURL: posterURL)
+        setupTextView()
+    }
     
     // MARK:- Life Cycle
     override func viewDidLoad() {
@@ -201,10 +231,8 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         setupDismissButton()
         setupScrollView()
         setupViews()
-        guard let movie = self.movie else {return}
-        guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
-        posterImageView.af_setImage(withURL: posterURL)
-        setupTextView()
+        setupHandlers()
+        presentContents()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -215,6 +243,29 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     func handleDismiss(){
         dismiss(animated: true, completion: nil)
     }
+    @objc
+    func handleFavorite(){
+        guard let movie = self.movie else {return}
+        favoriteButton.isEnabled = false
+        networkManager.mark("\(movie.id)", in: .favorites, with: !isFavorited) { (isCompleted, error) in
+            if isCompleted {
+                self.favoriteButton.tintColor = self.isFavorited ? .black : .red
+            }
+            self.favoriteButton.isEnabled = true
+        }
+    }
+    
+    @objc
+    func handleWatchlist(){
+        guard let movie = self.movie else {return}
+        watchListButton.isEnabled = false
+        networkManager.mark("\(movie.id)", in: .watchList, with: !isWatchlisted) { (isCompleted, error) in
+            if isCompleted {
+                self.watchListButton.tintColor = self.isWatchlisted ? .black : .red
+            }
+            self.watchListButton.isEnabled = true
+        }
+    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let safeAreaHeight = scrollView.safeAreaInsets.top
@@ -222,11 +273,9 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         let dismissButtonHeight: CGFloat = 15
         let shift = safeAreaHeight + dismissButtonTopSpace + dismissButtonHeight
         if scrollView.contentOffset.y+shift > posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .black {
-            print("change to black")
             dismissButton.setTitleColor(.white, for: .normal)
             dismissButtonEffect.effect = UIBlurEffect(style: .dark)
         } else if scrollView.contentOffset.y+shift < posterImageView.frame.height && dismissButton.titleColor(for: .normal) == .white  {
-            print("change to light")
             dismissButtonEffect.effect = UIBlurEffect(style: .light)
             dismissButton.setTitleColor(.black, for: .normal)
         }

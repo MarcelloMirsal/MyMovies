@@ -75,7 +75,7 @@ class URLBuilder {
             urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
             urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
             urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
-            urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
+            urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId ?? 0 )")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
                 NetworkConstants.ApiQueryItems.query(for: .sessionId),
@@ -98,13 +98,33 @@ class URLBuilder {
                 NetworkConstants.ApiQueryItems.query(for: .page, at: pageNumber)
             ]
             return urlComponents.string!
-            //https://api.themoviedb.org/3/account/{account_id}/watchlist/movies?api_key=6203d05815ada391f8b581d00ebbdbd5&language=en-US&session_id=515f35d5ff224e61eb245f39224ebff7434d2099&sort_by=created_at.asc&page=1
-
         case .userDetails:
             var urlComponents = URLComponents()
             urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
             urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
             urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.queryItems = [
+                NetworkConstants.ApiQueryItems.query(for: .apiKey),
+                NetworkConstants.ApiQueryItems.query(for: .sessionId)
+            ]
+            return urlComponents.string!
+        case .markFavorite:
+            var urlComponents = URLComponents()
+            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
+            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
+            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
+            urlComponents.queryItems = [
+                NetworkConstants.ApiQueryItems.query(for: .apiKey),
+                NetworkConstants.ApiQueryItems.query(for: .sessionId)
+            ]
+            return urlComponents.string!
+        case .markWatchlist:
+            var urlComponents = URLComponents()
+            urlComponents.scheme = NetworkConstants.ApiKeys.scheme.rawValue
+            urlComponents.host = NetworkConstants.ApiKeys.host.rawValue
+            urlComponents.path = NetworkConstants.ApiKeys.version.rawValue + path.rawValue
+            urlComponents.path = urlComponents.path.replacingOccurrences(of: "{account_id}", with: "\(NetworkManager.userId!)")
             urlComponents.queryItems = [
                 NetworkConstants.ApiQueryItems.query(for: .apiKey),
                 NetworkConstants.ApiQueryItems.query(for: .sessionId)

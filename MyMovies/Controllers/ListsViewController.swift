@@ -19,13 +19,7 @@ class ListsViewController: UITableViewController {
         return .portrait
     }
     
-    var listType: List = .favorites
-    
-    enum List: String {
-        case favorites = "Favorites"
-        case watchList = "Watch List"
-    }
-    
+    var listType: UserList = .favorites
     
     // MARK:- Methods
     func setupAppearance() {
@@ -40,12 +34,12 @@ class ListsViewController: UITableViewController {
     }
     
     func setupTableView(){
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
+        tableView.register(MovieListCell.self, forCellReuseIdentifier: cellID)
         tableView.rowHeight = 136
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
     }
     
-    func setListContents(for type: List) {
+    func setListContents(for type: UserList) {
         if listType == type {return}
         switch type {
         case .favorites:
@@ -75,11 +69,11 @@ class ListsViewController: UITableViewController {
         
         let alertActionSheetController = UIAlertController(title: "Lists", message: "Select a list ", preferredStyle: .actionSheet)
         
-        let favoriteAction = UIAlertAction(title: List.favorites.rawValue, style: .default) { (action) in
+        let favoriteAction = UIAlertAction(title: UserList.favorites.rawValue, style: .default) { (action) in
             self.setListContents(for: .favorites)
         }
         
-        let watchListAction = UIAlertAction(title: List.watchList.rawValue, style: .default) { (action) in
+        let watchListAction = UIAlertAction(title: UserList.watchList.rawValue, style: .default) { (action) in
             self.setListContents(for: .watchList)
         }
         
@@ -103,10 +97,12 @@ extension ListsViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as! MovieListCell
         let movie = apiResponse.results[indexPath.row]
-        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)
-        cell.textLabel?.text = movie.title
+        let imageURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath))
+        cell.posterImageView.af_setImage(withURL: imageURL!)
+        cell.titleLable.text = movie.title
+        cell.subtitleLable.text = Date().customDate(from: movie.releaseDate)
         return cell
     }
 
