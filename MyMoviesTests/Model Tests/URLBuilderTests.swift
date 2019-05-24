@@ -93,4 +93,24 @@ class URLBuilderTests: XCTestCase {
         XCTAssertEqual(optimalURL, url)
     }
     
+    func testURLBuilder_WatchTrailerPathURLShouldBeEqual() {
+        let movie = Movie(id: 23456, title: "Action", posterPath: "posterPath", overview: "overview", releaseDate: "2019-02-01")
+
+        let optimalURL = "https://api.themoviedb.org/3/movie/\(movie.id)/videos?api_key=\(NetworkConstants.ApiKeys.api.rawValue)&language=en-US"
+        
+        let url = URLBuilder.url(for: .watchTrailer, value: "\(movie.id)")
+        XCTAssertEqual(optimalURL, url)
+        
+    }
+    
+    func testURLBuilder_YouTubeVideoTrailerPathURLShouldBeEqual() {
+        let movieTrailerKey = "3Fe3J4r5csg"
+        
+        let optimalURL = "https://www.youtube.com/watch?v=3Fe3J4r5csg"
+        
+        let url = URLBuilder.url(for: .youtubeVideo, value: movieTrailerKey)
+        XCTAssertEqual(optimalURL, url)
+        
+    }
+    
 }

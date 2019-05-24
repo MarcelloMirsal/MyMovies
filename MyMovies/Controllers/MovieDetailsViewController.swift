@@ -150,6 +150,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     func setupHandlers() {
         favoriteButton.addTarget(self, action: #selector(handleFavorite), for: .touchUpInside)
         watchListButton.addTarget(self, action: #selector(handleWatchlist), for: .touchUpInside)
+        playButton.addTarget(self, action: #selector(handlePlayTrailer), for: .touchUpInside)
     }
     
     func presentContents() {
@@ -203,6 +204,21 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         }
     }
     
+    @objc
+    func handlePlayTrailer() {
+        guard let movie = self.movie else {return}
+        networkManager.response(for: .watchTrailer, value: "\(movie.id)") { (dataResponse) in
+            guard let data = dataResponse.data else {return}
+            guard let responseDict = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? Dictionary<String,Any> else {return}
+            guard let videosResults = responseDict["results"] as? Array<Any> else {return}
+            guard let movieTrailerDict = videosResults[0] as? Dictionary<String,Any> else {return}
+            guard let videoKey = movieTrailerDict["key"] as? String else {return}
+            print(videoKey)
+            let url = URLBuilder.url(for: .youtubeVideo, value: videoKey)
+            let videoURL = URL(string: url)!
+            UIApplication.shared.open(videoURL, options: [:], completionHandler: nil)
+        }
+    }
 }
 
 

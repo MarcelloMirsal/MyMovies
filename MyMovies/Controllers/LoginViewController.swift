@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Alamofire
 
 class LoginViewController: UIViewController {
     
@@ -68,6 +67,7 @@ class LoginViewController: UIViewController {
         setupAppearance()
         setupViews()
         setupHandlers()
+        
     }
     
     //MARK:- Handlers && Login Networking

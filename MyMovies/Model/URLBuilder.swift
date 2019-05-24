@@ -105,6 +105,20 @@ class URLBuilder {
                 NetworkConstants.ApiQueryItems.query(for: .sessionId)
             ]
             return urlComponents.string!
+        case .watchTrailer:
+            urlComponents.path += path.rawValue
+            urlComponents.path = urlComponents.path.replacingOccurrences(of: "{movie_id}", with: value)
+            urlComponents.queryItems = [
+                NetworkConstants.ApiQueryItems.query(for: .apiKey),
+                NetworkConstants.ApiQueryItems.query(for: .language)
+            ]
+            return urlComponents.string!
+        case .youtubeVideo:
+            var youtubeURLComponents = URLComponents(string: "https://www.youtube.com/watch?")!
+            youtubeURLComponents.queryItems = [
+                URLQueryItem(name: "v", value: value)
+            ]
+            return youtubeURLComponents.string!
         }
     }
 }

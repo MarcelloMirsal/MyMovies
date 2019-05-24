@@ -88,6 +88,15 @@ class NetworkConstantsTests: XCTestCase {
         let optimalURL = "/account/{account_id}/watchlist"
         XCTAssertEqual(NetworkConstants.ApiPaths.markWatchlist.rawValue, optimalURL )
     }
+    func testApiPath_WatchTrailerShouldBeEqual(){
+        let optimalURL = "/movie/{movie_id}/videos"
+        XCTAssertEqual(NetworkConstants.ApiPaths.watchTrailer.rawValue, optimalURL )
+    }
+    
+    func testApiPath_YouTubeVideoPathShoulBeEqual(){
+        let optimalURL = "https://www.youtube.com/watch?"
+        XCTAssertEqual(optimalURL, NetworkConstants.ApiPaths.youtubeVideo.rawValue)
+    }
     
     
     

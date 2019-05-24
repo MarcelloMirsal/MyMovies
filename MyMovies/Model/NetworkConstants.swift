@@ -68,6 +68,8 @@ final class NetworkConstants {
         case userDetails = "/account"
         case markFavorite = "/account/{account_id}/favorite"
         case markWatchlist = "/account/{account_id}/watchlist"
+        case watchTrailer = "/movie/{movie_id}/videos"
+        case youtubeVideo = "https://www.youtube.com/watch?"
     }
 
     

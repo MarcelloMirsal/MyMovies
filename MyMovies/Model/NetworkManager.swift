@@ -27,7 +27,7 @@ class NetworkManager {
      
      - Parameter apiPath: the path of requested content.
      - Parameter page: number of page for results.
-     - Parameter value: a special parameter used only to set search query, image path.
+     - Parameter value: a special parameter used only to set search query, image path and watch trailer key.
      - Parameter completion: a block object executed when request ends.
      - Parameter dataResponse: the returned response from request
      ## Important Notes ##
@@ -191,9 +191,7 @@ class NetworkManager {
             }
             completion(true, nil)
         }
-        
     }
-    
     
     init() {
         
