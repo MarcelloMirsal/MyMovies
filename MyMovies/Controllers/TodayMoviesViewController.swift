@@ -28,6 +28,10 @@ class TodayMoviesViewController: UIViewController, UICollectionViewDelegate, UIC
         return .slide
     }
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    
     var apiResponse: ApiResponse<Movie>!
     
     let networkManager = NetworkManager()
@@ -108,7 +112,7 @@ extension TodayMoviesViewController {
         cell.titleLabel.text = movie.title
         cell.dateLabel.text = Date().customDate(from: movie.releaseDate)
         cell.posterImageView.image = nil
-        cell.genreLabel.text = ""
+        //cell.popularityLabel.text = "\(movie.voteAverage * 100)%"
         guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
         cell.posterImageView.af_setImage(withURL: posterURL)
         return cell
@@ -173,6 +177,7 @@ extension TodayMoviesViewController {
 
     func loadContents() {
         if let _ = apiResponse {
+            if apiResponse.page == apiResponse.totalPages {print("No more data");return}
             networkManager.response(for: .todayMovies, at: apiResponse.page+1) { (response) in
                 guard let data = response.data else { fatalError() }
                 guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}

@@ -46,14 +46,13 @@ class MovieDetailsViewControllerTests: XCTestCase {
         XCTAssertTrue(sut.supportedInterfaceOrientations == .portrait)
     }
     
-    
     // MARK:- test methods
     
     func testSut_setUpTextViewShouldBeFilledWithMovieData(){
-        sut.movie = Movie(id: 123456, title: "Action", posterPath: "path", overview: "this is an action movie", releaseDate: "2019-09-20")
-        sut.setupTextView()
-        let movieData = "\nAction\n \nRelease Date\n2019-09-20\n\nOverview\nthis is an action movie"
-        XCTAssertEqual(sut.textView.text, movieData)
+        sut.movie = Movie(id: 123456, title: "Action", posterPath: "path", overview: "this is an action movie", releaseDate: "2019-09-20", voteAverage: 0.5)
+        sut.setupMovieInfo()
+        let optimalMovieInfo = "Popularity\n5.0%\n\nRelease Date\n2019-09-20\n\nOverview\nthis is an action movie"
+        XCTAssertEqual(sut.textView.text, optimalMovieInfo)
     }
     
 }

@@ -36,7 +36,7 @@ class TodayMoviesViewControllerTests: XCTestCase {
     }
     func testCollectionViewCanInsertCell_ShouldBeAdded(){
         let collectionView = sut.collectionView
-        let newMovie = Movie(id: 14, title: "Movie5", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate")
+        let newMovie = Movie(id: 14, title: "Movie5", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate", voteAverage: 0.5)
         sut.apiResponse.results.append(newMovie)
         let indexPath = IndexPath(item: sut.apiResponse.results.count-1, section: 0)
         collectionView.reloadData()
@@ -62,10 +62,10 @@ class TodayMoviesViewControllerMock: TodayMoviesViewController {
         setupViews()
         apiResponse = nil
         let movies = [
-            Movie(id: 1, title: "Movie1", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
-            Movie(id: 12, title: "Movie2", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
-            Movie(id: 13, title: "Movie3", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate"),
-            Movie(id: 14, title: "Movie4", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate")
+            Movie(id: 1, title: "Movie1", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate", voteAverage: 0.5),
+            Movie(id: 12, title: "Movie2", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate", voteAverage: 0.5),
+            Movie(id: 13, title: "Movie3", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate", voteAverage: 0.5),
+            Movie(id: 14, title: "Movie4", posterPath: "posterPath", overview: "overview", releaseDate: "releaseDate", voteAverage: 0.5)
         ]
         apiResponse = ApiResponse<Movie>(page: 1, totalPages: 123, results: movies)
         collectionView.reloadData()

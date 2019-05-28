@@ -94,7 +94,7 @@ class URLBuilderTests: XCTestCase {
     }
     
     func testURLBuilder_WatchTrailerPathURLShouldBeEqual() {
-        let movie = Movie(id: 23456, title: "Action", posterPath: "posterPath", overview: "overview", releaseDate: "2019-02-01")
+        let movie = Movie(id: 23456, title: "Action", posterPath: "posterPath", overview: "overview", releaseDate: "2019-02-01", voteAverage: 0.5)
 
         let optimalURL = "https://api.themoviedb.org/3/movie/\(movie.id)/videos?api_key=\(NetworkConstants.ApiKeys.api.rawValue)&language=en-US"
         

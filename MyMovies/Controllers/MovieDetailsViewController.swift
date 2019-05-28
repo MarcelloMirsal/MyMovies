@@ -15,6 +15,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     var movie: Movie?
     
     let networkManager = NetworkManager()
+    weak var editingListDelegate: EditingMoviesList?
     
     var isFavorited: Bool {
         if favoriteButton.tintColor == .black {
@@ -33,6 +34,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     }
     
     var textViewHeightConstraint = NSLayoutConstraint()
+    var movieTitleHeightConstraint = NSLayoutConstraint()
     
     override var prefersStatusBarHidden: Bool {
         return true
@@ -52,13 +54,27 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     let contentsView: UIView = {
         let view = UIView()
-        view.backgroundColor = .clear
+        view.backgroundColor = .white
         return view
     }()
     
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.layer.shadowColor = UIColor.lightGray.cgColor
+        imageView.layer.shadowOffset = CGSize(width: 0, height: 20)
+        imageView.layer.shadowOpacity = 1
+        imageView.layer.shadowRadius = 20
         return imageView
+    }()
+    
+    let movieTitleLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.textAlignment = .center
+        label.font = UIFont(name: "Avenir-Heavy", size: 26)
+        label.backgroundColor = .white
+        return label
     }()
     
     let dismissButton: UIButton = {
@@ -105,6 +121,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     
     lazy var movieInfoStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [favoriteButton , watchListButton , playButton])
+        stackView.backgroundColor = .white
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
@@ -125,10 +142,10 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         return effect
     }
     
-    func setupTextView() {
+    func setupMovieInfo() {
         guard let movie = self.movie else {return}
-        let titles = ["\n\(movie.title)" , "Release Date\n","Overview\n"]
-        let subTitles = ["\n \n", "\(movie.releaseDate)\n\n" , "\(movie.overview)"]
+        let titles = ["Popularity\n" ,"Release Date\n","Overview\n"]
+        let subTitles = ["\(movie.voteAverage * 10)%\n\n","\(movie.releaseDate)\n\n" , "\(movie.overview)"]
         
         let textViewAttributedText = NSMutableAttributedString()
         
@@ -144,7 +161,12 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         }
         let estimatedTextSize = textViewAttributedText.boundingRect(with: .init(width: 300, height: 0), options: .usesLineFragmentOrigin, context: nil)
         textView.attributedText = textViewAttributedText
-        textViewHeightConstraint.constant = estimatedTextSize.height
+        textViewHeightConstraint.constant = estimatedTextSize.height + 16
+        
+        movieTitleLabel.text = movie.title
+        let movieTitleAttributedText = movieTitleLabel.attributedText!
+        let estimatedTitleTextSize = movieTitleAttributedText.boundingRect(with: .init(width: 300, height: 0), options: .usesLineFragmentOrigin, context: nil)
+        movieTitleHeightConstraint.constant = estimatedTitleTextSize.height
     }
     
     func setupHandlers() {
@@ -157,11 +179,21 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         guard let movie = self.movie else {return}
         guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
         posterImageView.af_setImage(withURL: posterURL)
-        setupTextView()
+        setupMovieInfo()
+        scrollView.backgroundColor = posterImageView.image == nil ? .white : posterImageView.image!.averageColor!
     }
     
     func setupAppearance() {
         view.backgroundColor = .white
+    }
+    
+    func setupUI(for list: UserList) {
+        switch list {
+        case .favorites:
+            favoriteButton.tintColor = .red
+        case .watchList:
+            watchListButton.tintColor = .red
+        }
     }
     
     // MARK:- Life Cycle
@@ -177,31 +209,62 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     //MARK:- Handlers
     @objc
     func handleDismiss(){
-        dismiss(animated: true, completion: nil)
+        if !self.isFavorited {
+            self.editingListDelegate?.removeItem(from: .favorites)
+        }
+        if !self.isWatchlisted {
+            self.editingListDelegate?.removeItem(from: .watchList)
+        }
+        dismiss(animated: true)
     }
     
     @objc
     func handleFavorite(){
         guard let movie = self.movie else {return}
-        favoriteButton.isEnabled = false
-        networkManager.mark("\(movie.id)", in: .favorites, with: !isFavorited) { (isCompleted, error) in
-            if isCompleted {
-                self.favoriteButton.tintColor = self.isFavorited ? .black : .red
+        let requestAlertController = UIAlertController(message: "Please Wait")
+        self.favoriteButton.isEnabled = false
+        present(requestAlertController, animated: true) {
+            self.networkManager.mark("\(movie.id)", in: .favorites, with: !self.isFavorited) { (isCompleted, error) in
+                if isCompleted && error == nil {
+                    self.favoriteButton.tintColor = self.isFavorited ? .black : .red
+                } else {
+                    self.favoriteButton.tintColor = .black
+                }
+                self.favoriteButton.isEnabled = true
+                requestAlertController.dismiss(animated: true, completion: nil)
             }
-            self.favoriteButton.isEnabled = true
         }
     }
     
     @objc
     func handleWatchlist(){
         guard let movie = self.movie else {return}
-        watchListButton.isEnabled = false
-        networkManager.mark("\(movie.id)", in: .watchList, with: !isWatchlisted) { (isCompleted, error) in
-            if isCompleted {
-                self.watchListButton.tintColor = self.isWatchlisted ? .black : .red
+        let requestAlertController = UIAlertController(message: "Please Wait")
+        self.watchListButton.isEnabled = false
+        present(requestAlertController, animated: true) {
+            self.networkManager.mark("\(movie.id)", in: .watchList, with: !self.isWatchlisted) { (isCompleted, error) in
+                if isCompleted && error == nil {
+                    self.watchListButton.tintColor = self.isWatchlisted ? .black : .red
+                    requestAlertController.title = "Done"
+                } else {
+                    self.watchListButton.tintColor = .black
+                    requestAlertController.title = "Failed"
+                }
+                self.watchListButton.isEnabled = true
+                requestAlertController.dismiss(animated: true, completion: nil)
             }
-            self.watchListButton.isEnabled = true
         }
+        
+        
+        
+//        guard let movie = self.movie else {return}
+//        watchListButton.isEnabled = false
+//        networkManager.mark("\(movie.id)", in: .watchList, with: !isWatchlisted) { (isCompleted, error) in
+//            if isCompleted {
+//                self.watchListButton.tintColor = self.isWatchlisted ? .black : .red
+//            }
+//            self.watchListButton.isEnabled = true
+//        }
     }
     
     @objc
@@ -281,10 +344,18 @@ extension MovieDetailsViewController {
         movieInfoStackView.setConstraint(for: movieInfoStackView.trailingAnchor, to: posterImageView.trailingAnchor)
         movieInfoStackView.heightAnchor.constraint(equalToConstant: 52).isActive = true
         
+        // MARK: movieTitle
+        contentsView.addSubview(movieTitleLabel)
+        movieTitleLabel.setConstraint(for: movieTitleLabel.topAnchor, to: movieInfoStackView.bottomAnchor, constant: 8)
+        movieTitleLabel.setConstraint(for: movieTitleLabel.leadingAnchor, to: movieInfoStackView.leadingAnchor, constant: 16)
+        movieTitleLabel.setConstraint(for: movieTitleLabel.trailingAnchor, to: movieInfoStackView.trailingAnchor, constant: -16)
+        movieTitleHeightConstraint =  movieTitleLabel.heightAnchor.constraint(equalToConstant: 0)
+        movieTitleHeightConstraint.isActive = true
+        
         
         // MARK: textView
         contentsView.addSubview(textView)
-        textView.setConstraint(for: textView.topAnchor, to: movieInfoStackView.bottomAnchor)
+        textView.setConstraint(for: textView.topAnchor, to: movieTitleLabel.bottomAnchor)
         textView.setConstraint(for: textView.leadingAnchor, to: posterImageView.leadingAnchor, constant: 16)
         textView.setConstraint(for: textView.trailingAnchor, to: posterImageView.trailingAnchor, constant: -16)
         textView.setConstraint(for: textView.bottomAnchor, to: contentsView.bottomAnchor)
@@ -292,7 +363,6 @@ extension MovieDetailsViewController {
         textViewHeightConstraint.isActive = true
     }
 }
-
 
 // MARK:- ScrollViewDelegate Implementation
 extension MovieDetailsViewController {
@@ -311,6 +381,4 @@ extension MovieDetailsViewController {
             dismissButton.setTitleColor(.black, for: .normal)
         }
     }
-    
-    
 }

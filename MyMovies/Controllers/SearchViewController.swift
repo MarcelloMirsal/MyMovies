@@ -13,6 +13,9 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
     // MARK:- Properties
     var filteredMovies = [Movie]()
     
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
     
     // MARK:- UI Properties
     let searchController = UISearchController(searchResultsController: nil)

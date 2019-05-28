@@ -47,13 +47,13 @@ class LoginViewController: UIViewController {
         let listsViewController = ListsViewController()
         let searchViewController = SearchViewController()
         
+        
         let listsNavigationController = UINavigationController(rootViewController: listsViewController)
         let searchNavigationController = UINavigationController(rootViewController: searchViewController)
         
+        listsNavigationController.tabBarItem!.title = "Lists"
         todayViewController.tabBarItem = UITabBarItem(title: "Today", image: nil, tag: 0)
-        listsViewController.tabBarItem = UITabBarItem(title: "Lists", image: nil, tag: 0)
         searchViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-        
         
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [todayViewController , listsNavigationController , searchNavigationController]
@@ -67,17 +67,22 @@ class LoginViewController: UIViewController {
         setupAppearance()
         setupViews()
         setupHandlers()
-        
     }
     
     //MARK:- Handlers && Login Networking
     @objc
     private func loginHandler(button: UIButton) {
-        NetworkManager().session(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
-            if isSuccedd && error == nil {
-                self.presentTabBarViewController()
-            } else {
-                print(error!.localizedDescription)
+        loginButton.isEnabled = false
+        let activityAlert = UIAlertController(message: "Loggin in")
+        present(activityAlert, animated: true) {
+            NetworkManager().session(username: NetworkConstants.demoUser, password: NetworkConstants.demoPassword ) { (isSuccedd, error) in
+                activityAlert.dismiss(animated: true, completion: nil)
+                if isSuccedd && error == nil {
+                    self.presentTabBarViewController()
+                } else {
+                    print(error!.localizedDescription)
+                }
+                self.loginButton.isEnabled = true
             }
         }
     }

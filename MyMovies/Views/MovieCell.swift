@@ -28,9 +28,8 @@ class MovieCell: UICollectionViewCell {
         return label
     }()
     
-    let genreLabel: UILabel = {
+    let popularityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Drama"
         label.font = UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)
         label.textColor = .lightGray
         return label
@@ -96,11 +95,11 @@ extension MovieCell {
         titleLabel.setConstraint(for: titleLabel.trailingAnchor, to: trailingAnchor)
         titleLabel.heightAnchor.constraint(equalToConstant: 90).isActive = true
         
-        //MARK: genreLabel
-        addSubview(genreLabel)
-        genreLabel.setConstraint(for: genreLabel.topAnchor, to: titleLabel.bottomAnchor)
-        genreLabel.setConstraint(for: genreLabel.leadingAnchor, to: leadingAnchor, constant: 16)
-        genreLabel.setConstraint(for: genreLabel.trailingAnchor, to: trailingAnchor)
-        genreLabel.heightAnchor.constraint(equalToConstant: 16).isActive = true
+        //MARK: popularityLabel
+        addSubview(popularityLabel)
+        popularityLabel.setConstraint(for: popularityLabel.topAnchor, to: dateLabel.topAnchor)
+        popularityLabel.setConstraint(for: popularityLabel.trailingAnchor, to: trailingAnchor)
+        popularityLabel.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        popularityLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
     }
 }

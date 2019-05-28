@@ -9,7 +9,13 @@
 import UIKit
 
 let cellID = "cellId"
-class ListsViewController: UITableViewController, UITableViewDataSourcePrefetching {
+
+protocol EditingMoviesList: class {
+    func removeItem(from list: UserList)
+}
+
+class ListsViewController: UITableViewController, UITableViewDataSourcePrefetching, EditingMoviesList {
+    
     
     // MARK:- Properties
     var apiResponse: ApiResponse<Movie>!
@@ -36,6 +42,7 @@ class ListsViewController: UITableViewController, UITableViewDataSourcePrefetchi
         tableView.register(MovieListCell.self, forCellReuseIdentifier: cellID)
         tableView.rowHeight = 136
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
+        tableView.prefetchDataSource = self
     }
     
     func setListContents(for type: UserList) {
@@ -109,6 +116,8 @@ extension ListsViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let movieDetailsViewController = MovieDetailsViewController()
+        movieDetailsViewController.editingListDelegate = self
+        movieDetailsViewController.setupUI(for: listType)
         let movie = apiResponse.results[indexPath.row]
         movieDetailsViewController.movie = movie
         present(movieDetailsViewController, animated: true, completion: nil)
@@ -125,21 +134,33 @@ extension ListsViewController {
             guard let imageURL = URL(string: URLBuilder.url(for: .image, value: posterPathURL)) else {return}
             UIImageView().af_setImage(withURL: imageURL) // to cache the image
             if indexPath.row+1 == apiResponse.results.count {
-                print("Load More COntens")
                 loadContents()
             }
         }
     }
 }
 
+// MARK:- Editing List Protocol Implementation
+extension ListsViewController {
+    
+    func removeItem(from list: UserList) {
+        if list == listType { // only remove cell if the movie is listed in the current movie list
+            guard let indexPath = tableView.indexPathForSelectedRow else {return}
+            apiResponse.results.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+    }
+
+}
+
 // MARK:- Networking
 extension ListsViewController {
     
     func loadContents() {
-        self.tableView.reloadData()
         let listPath: NetworkConstants.ApiPaths = listType == .favorites ? .favoriteList : .watchList
         
         if let _ = apiResponse {
+            if apiResponse.page == apiResponse.totalPages {print("No more data");return}
             NetworkManager().response(for: listPath, at: apiResponse.page+1) { (response) in
                 guard let data = response.data else { fatalError() }
                 guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}

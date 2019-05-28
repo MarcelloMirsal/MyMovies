@@ -15,9 +15,10 @@ struct Movie: Codable {
     let posterPath: String
     let overview: String
     let releaseDate: String
+    let voteAverage: Double
     
     enum CodingKeys: String, CodingKey {
-        case id, title, posterPath = "poster_path", releaseDate = "release_date", overview
+        case id, title, posterPath = "poster_path", releaseDate = "release_date", overview, voteAverage = "vote_average"
     }
 }
 
