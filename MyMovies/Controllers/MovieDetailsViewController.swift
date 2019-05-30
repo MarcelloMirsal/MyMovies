@@ -179,7 +179,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         guard let movie = self.movie else {return}
         guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
         posterImageView.af_setImage(withURL: posterURL)
-        setupMovieInfo()
         scrollView.backgroundColor = posterImageView.image == nil ? .white : posterImageView.image!.averageColor!
     }
     
@@ -206,9 +205,15 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         presentContents()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupMovieInfo()
+    }
+    
     //MARK:- Handlers
     @objc
     func handleDismiss(){
+        scrollView.contentOffset.y = 0
         if !self.isFavorited {
             self.editingListDelegate?.removeItem(from: .favorites)
         }
@@ -332,10 +337,12 @@ extension MovieDetailsViewController {
         posterImageView.setConstraint(for: posterImageView.topAnchor, to: contentsView.topAnchor)
         posterImageView.setConstraint(for: posterImageView.leadingAnchor, to: contentsView.leadingAnchor)
         posterImageView.setConstraint(for: posterImageView.trailingAnchor, to: contentsView.trailingAnchor)
-        // ratio 16:9
-        let width = view.frame.width
+        // ratio 4:3
+        let contentSpacing: CGFloat = 16.0
+        let width = view.frame.width - (contentSpacing * 2.0)
         let height = width * 4 / 3
-        posterImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        let posterImageHeight = posterImageView.heightAnchor.constraint(equalToConstant: height)
+        posterImageHeight.isActive = true
         
         // MARK: movieInfoStackView
         contentsView.addSubview(movieInfoStackView)

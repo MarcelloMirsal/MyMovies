@@ -47,7 +47,6 @@ class LoginViewController: UIViewController {
         let listsViewController = ListsViewController()
         let searchViewController = SearchViewController()
         
-        
         let listsNavigationController = UINavigationController(rootViewController: listsViewController)
         let searchNavigationController = UINavigationController(rootViewController: searchViewController)
         
@@ -55,9 +54,8 @@ class LoginViewController: UIViewController {
         todayViewController.tabBarItem = UITabBarItem(title: "Today", image: nil, tag: 0)
         searchViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
         
-        let tabBarController = UITabBarController()
+        let tabBarController = MasterTabBarController()
         tabBarController.viewControllers = [todayViewController , listsNavigationController , searchNavigationController]
-        
         present(tabBarController, animated: true, completion: nil)
     }
     
@@ -114,3 +112,6 @@ extension LoginViewController {
         loginButton.heightAnchor.constraint(equalToConstant: 32).isActive = true
     }
 }
+
+
+

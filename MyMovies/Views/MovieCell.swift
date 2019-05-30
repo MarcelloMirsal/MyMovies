@@ -37,7 +37,6 @@ class MovieCell: UICollectionViewCell {
     
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "poster")
         return imageView
     }()
     

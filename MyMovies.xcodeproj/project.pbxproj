@@ -31,6 +31,8 @@
 		FB5F4E7D228B6A8F002005D9 /* URLBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F4E7C228B6A8F002005D9 /* URLBuilder.swift */; };
 		FB5F4E7F228B6AD3002005D9 /* URLBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F4E7E228B6AD3002005D9 /* URLBuilderTests.swift */; };
 		FB5F4E81229378BE002005D9 /* MovieListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5F4E80229378BE002005D9 /* MovieListCell.swift */; };
+		FB8FB0B8229F50C200D22B1D /* MasterTabBarControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8FB0B7229F50C200D22B1D /* MasterTabBarControllerTests.swift */; };
+		FB8FB0BA229F50DF00D22B1D /* MasterTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB8FB0B9229F50DF00D22B1D /* MasterTabBarController.swift */; };
 		FBE106B5227F288F00F19952 /* MovieCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106B4227F288F00F19952 /* MovieCellTests.swift */; };
 		FBE106BA227F295500F19952 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106B9227F295500F19952 /* MovieCell.swift */; };
 		FBE106BC227F32F400F19952 /* TodayHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE106BB227F32F400F19952 /* TodayHeader.swift */; };
@@ -81,6 +83,8 @@
 		FB5F4E7C228B6A8F002005D9 /* URLBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBuilder.swift; sourceTree = "<group>"; };
 		FB5F4E7E228B6AD3002005D9 /* URLBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLBuilderTests.swift; sourceTree = "<group>"; };
 		FB5F4E80229378BE002005D9 /* MovieListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListCell.swift; sourceTree = "<group>"; };
+		FB8FB0B7229F50C200D22B1D /* MasterTabBarControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTabBarControllerTests.swift; sourceTree = "<group>"; };
+		FB8FB0B9229F50DF00D22B1D /* MasterTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterTabBarController.swift; sourceTree = "<group>"; };
 		FBE106B4227F288F00F19952 /* MovieCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCellTests.swift; sourceTree = "<group>"; };
 		FBE106B9227F295500F19952 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
 		FBE106BB227F32F400F19952 /* TodayHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayHeader.swift; sourceTree = "<group>"; };
@@ -196,6 +200,7 @@
 		FBE106B1227F284000F19952 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				FB8FB0B9229F50DF00D22B1D /* MasterTabBarController.swift */,
 				FB0C8D092280D8EA0056C79F /* SearchViewController.swift */,
 				FB0C8D052280C8F60056C79F /* ListsViewController.swift */,
 				FBE106C0227F363600F19952 /* MovieDetailsViewController.swift */,
@@ -220,6 +225,7 @@
 		FBE106B3227F285400F19952 /* Controllers Tests */ = {
 			isa = PBXGroup;
 			children = (
+				FB8FB0B7229F50C200D22B1D /* MasterTabBarControllerTests.swift */,
 				FB0C8D032280C8A00056C79F /* ListsViewControllerTests.swift */,
 				FBE106C2227F364800F19952 /* MovieDetailsViewControllerTests.swift */,
 				FB0C8D072280D8B20056C79F /* SearchViewControllerTests.swift */,
@@ -425,6 +431,7 @@
 			files = (
 				FBE106BC227F32F400F19952 /* TodayHeader.swift in Sources */,
 				FB2C5794227E11D900CA2381 /* LoginViewController.swift in Sources */,
+				FB8FB0BA229F50DF00D22B1D /* MasterTabBarController.swift in Sources */,
 				FB2C593C228515C5005052EF /* Movie.swift in Sources */,
 				FB2C59352283AB15005052EF /* NetworkConstants.swift in Sources */,
 				FB5F4E7D228B6A8F002005D9 /* URLBuilder.swift in Sources */,
@@ -449,6 +456,7 @@
 				FB5F4E7F228B6AD3002005D9 /* URLBuilderTests.swift in Sources */,
 				FB2C5792227E117000CA2381 /* LoginViewControllerTests.swift in Sources */,
 				FB2C5790227E0CF700CA2381 /* AppDelegateTests.swift in Sources */,
+				FB8FB0B8229F50C200D22B1D /* MasterTabBarControllerTests.swift in Sources */,
 				FBE106B5227F288F00F19952 /* MovieCellTests.swift in Sources */,
 				FB2C5798227E168800CA2381 /* TodayMoviesViewControllerTests.swift in Sources */,
 				FB2C59312283AA2E005052EF /* NetworkManagerTests.swift in Sources */,

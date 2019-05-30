@@ -26,7 +26,20 @@ class ListsViewController: UITableViewController, UITableViewDataSourcePrefetchi
     
     var listType: UserList = .favorites
     
+    let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .gray)
+        return activityIndicator
+    }()
+    
     // MARK:- Methods
+    fileprivate func setupViews() {
+        // MARK: activityIndicator
+        guard let headerView = tableView.tableHeaderView else {fatalError()}
+        headerView.addSubview(activityIndicator)
+        activityIndicator.setConstraint(for: activityIndicator.centerXAnchor, to: headerView.centerXAnchor)
+        activityIndicator.setConstraint(for: activityIndicator.centerYAnchor, to: headerView.centerYAnchor)
+    }
+    
     func setupAppearance() {
         view.backgroundColor = .white
     }
@@ -43,21 +56,39 @@ class ListsViewController: UITableViewController, UITableViewDataSourcePrefetchi
         tableView.rowHeight = 136
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0)
         tableView.prefetchDataSource = self
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 30) )
+        tableView.tableHeaderView = headerView
     }
     
     func setListContents(for type: UserList) {
         if listType == type {return}
+        tableView.isUserInteractionEnabled = false
         switch type {
         case .favorites:
             listType = type
             navigationItem.title = listType.rawValue
             apiResponse = nil
+            tableView.reloadData()
+            updateActivityIndicator(isAnimating: true)
             loadContents()
         case .watchList:
             listType = type
             navigationItem.title = listType.rawValue
             apiResponse = nil
+            tableView.reloadData()
+            updateActivityIndicator(isAnimating: true)
             loadContents()
+        }
+        tableView.isUserInteractionEnabled = true
+    }
+    
+    func updateActivityIndicator(isAnimating: Bool) {
+        if isAnimating {
+            tableView.tableHeaderView?.frame.size.height = 30
+            activityIndicator.startAnimating()
+        } else {
+            tableView.tableHeaderView?.frame.size.height = 0
+            activityIndicator.stopAnimating()
         }
     }
     
@@ -68,6 +99,8 @@ class ListsViewController: UITableViewController, UITableViewDataSourcePrefetchi
         setupAppearance()
         setupNavigationBar()
         setupTableView()
+        setupViews()
+        updateActivityIndicator(isAnimating: true)
         loadContents()
     }
     
@@ -173,6 +206,7 @@ extension ListsViewController {
                 guard let data = response.data else { fatalError() }
                 guard let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data) else {print("Something Went Wrong");return}
                 self.apiResponse = apiResponse
+                self.updateActivityIndicator(isAnimating: false)
                 self.tableView.reloadData()
             }
         }
