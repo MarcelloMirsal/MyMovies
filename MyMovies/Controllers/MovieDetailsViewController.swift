@@ -178,8 +178,12 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     func presentContents() {
         guard let movie = self.movie else {return}
         guard let posterURL = URL(string: URLBuilder.url(for: .image, value: movie.posterPath)) else {fatalError()}
-        posterImageView.af_setImage(withURL: posterURL)
-        scrollView.backgroundColor = posterImageView.image == nil ? .white : posterImageView.image!.averageColor!
+        
+        posterImageView.af_setImage(withURL: posterURL) { (dataResponse) in
+            guard let image = dataResponse.value else {return}
+            self.posterImageView.image = image
+            self.scrollView.backgroundColor = image.averageColor ?? .white
+        }
     }
     
     func setupAppearance() {
@@ -259,17 +263,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
                 requestAlertController.dismiss(animated: true, completion: nil)
             }
         }
-        
-        
-        
-//        guard let movie = self.movie else {return}
-//        watchListButton.isEnabled = false
-//        networkManager.mark("\(movie.id)", in: .watchList, with: !isWatchlisted) { (isCompleted, error) in
-//            if isCompleted {
-//                self.watchListButton.tintColor = self.isWatchlisted ? .black : .red
-//            }
-//            self.watchListButton.isEnabled = true
-//        }
     }
     
     @objc
@@ -356,6 +349,7 @@ extension MovieDetailsViewController {
         movieTitleLabel.setConstraint(for: movieTitleLabel.topAnchor, to: movieInfoStackView.bottomAnchor, constant: 8)
         movieTitleLabel.setConstraint(for: movieTitleLabel.leadingAnchor, to: movieInfoStackView.leadingAnchor, constant: 16)
         movieTitleLabel.setConstraint(for: movieTitleLabel.trailingAnchor, to: movieInfoStackView.trailingAnchor, constant: -16)
+        
         movieTitleHeightConstraint =  movieTitleLabel.heightAnchor.constraint(equalToConstant: 0)
         movieTitleHeightConstraint.isActive = true
         

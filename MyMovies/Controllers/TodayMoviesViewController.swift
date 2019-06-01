@@ -247,7 +247,7 @@ extension TodayMoviesViewController {
 
 
 class PresentationAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-    let duration = 0.5
+    let duration = 0.7
     var presenting = true
     var originFrame = CGRect.zero
     var scaledFrame = CGRect.zero
@@ -276,12 +276,15 @@ class PresentationAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             let toView = transitionContext.view(forKey: .to)!
             let fromView = transitionContext.view(forKey: .from)!
             let fromController = transitionContext.viewController(forKey: .from) as! MovieDetailsViewController
-            //let toController = (transitionContext.viewController(forKey: .to) as! UITabBarController).viewControllers!.first! as! TodayMoviesViewController
             containerView.addSubview(toView)
             containerView.addSubview(fromView)
             
             UIView.animateKeyframes(withDuration: duration, delay: 0, options: [], animations: {
-                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.75, animations: {
+                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.25, animations: {
+                    fromController.movieTitleLabel.text = ""
+                    fromController.textView.alpha = 0
+                })
+                UIView.addKeyframe(withRelativeStartTime: 0.25, relativeDuration: 0.75, animations: {
                     fromView.frame = self.originFrame
                     fromController.dismissButtonEffect.alpha = 0.5
                     fromView.layoutIfNeeded()

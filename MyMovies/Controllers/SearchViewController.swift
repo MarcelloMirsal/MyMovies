@@ -7,11 +7,18 @@
 //
 
 import UIKit
+import Alamofire
 
-class SearchViewController: ListsViewController, UISearchResultsUpdating {
+let searchCellId = "searchCellId"
+
+// TODO:- The search scope is limited to show only 20 results(Only the results from first page)
+
+
+class SearchViewController: UITableViewController ,UISearchResultsUpdating {
     
     // MARK:- Properties
     var filteredMovies = [Movie]()
+    var lastSearchRequest: DataRequest!
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
@@ -21,7 +28,7 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
     let searchController = UISearchController(searchResultsController: nil)
     
     // MARK:- Methods
-    override func setupNavigationBar() {
+    func setupNavigationBar() {
         navigationItem.title = "Search"
         navigationController?.navigationBar.prefersLargeTitles = true
     }
@@ -33,22 +40,28 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
         definesPresentationContext = true
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        definesPresentationContext = true
     }
     
     func searchBarIsEmpty() -> Bool {
         return searchController.searchBar.text?.isEmpty ?? true
     }
     
-    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
-        filteredMovies = apiResponse.results.filter({( movie : Movie) -> Bool in
-            return movie.title.lowercased().contains(searchText.lowercased())
-        })
-        
-        tableView.reloadData()
+    func isFiltering() -> Bool {
+        return searchController.isActive && !searchBarIsEmpty()
+    }
+    
+    func setupAppearance() {
+        view.backgroundColor = .white
+    }
+    
+    func setupTableView() {
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: searchCellId)
     }
     
     // MARK:- Life Cycle
     override func viewDidLoad() {
+        super.viewDidLoad()
         setupAppearance()
         setupNavigationBar()
         setupTableView()
@@ -57,11 +70,17 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
     
     // MARK:- handlers
     func handle(searchQuery: String) {
-        NetworkManager().response(for: .search, value: searchQuery) { (dataResponse) in
-            guard let data = dataResponse.data else {return}
+        if let _ = lastSearchRequest {
+            lastSearchRequest.cancel()
+            lastSearchRequest = nil
+        }
+        
+        let urlRequest = URLBuilder.url(for: .search, value: searchQuery)
+        let urlQuery = URL(string: urlRequest)!
+        self.lastSearchRequest = Alamofire.request(urlQuery).responseData { (dataResponse) in
+            guard let data = dataResponse.data else {fatalError()}
             let apiResponse = try? JSONDecoder().decode(ApiResponse<Movie>.self, from: data)
             if let movies = apiResponse?.results {
-                print(searchQuery)
                 self.filteredMovies = movies
                 self.tableView.reloadData()
             }
@@ -74,11 +93,16 @@ class SearchViewController: ListsViewController, UISearchResultsUpdating {
 extension SearchViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredMovies.count
+        if isFiltering() {
+            return filteredMovies.count
+        }
+        else {
+            return 0
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: searchCellId, for: indexPath)
         let movie = filteredMovies[indexPath.row]
         cell.textLabel?.text = movie.title
         return cell

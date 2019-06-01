@@ -210,7 +210,5 @@ extension ListsViewController {
                 self.tableView.reloadData()
             }
         }
-        
-        
     }
 }

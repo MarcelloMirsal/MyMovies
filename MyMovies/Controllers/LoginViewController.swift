@@ -50,8 +50,8 @@ class LoginViewController: UIViewController {
         let listsNavigationController = UINavigationController(rootViewController: listsViewController)
         let searchNavigationController = UINavigationController(rootViewController: searchViewController)
         
-        listsNavigationController.tabBarItem!.title = "Lists"
-        todayViewController.tabBarItem = UITabBarItem(title: "Today", image: nil, tag: 0)
+        listsNavigationController.tabBarItem = UITabBarItem(title: "Lists", image: #imageLiteral(resourceName: "list icon"), tag: 0)
+        todayViewController.tabBarItem = UITabBarItem(title: "Today", image: #imageLiteral(resourceName: "todaymovies icon"), tag: 0)
         searchViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
         
         let tabBarController = MasterTabBarController()
