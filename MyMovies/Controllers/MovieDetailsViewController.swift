@@ -64,6 +64,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
         imageView.layer.shadowOffset = CGSize(width: 0, height: 20)
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 20
+        imageView.backgroundColor = .darkGray
         return imageView
     }()
     
@@ -236,6 +237,7 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
             self.networkManager.mark("\(movie.id)", in: .favorites, with: !self.isFavorited) { (isCompleted, error) in
                 if isCompleted && error == nil {
                     self.favoriteButton.tintColor = self.isFavorited ? .black : .red
+                    requestAlertController.title = "Done"
                 } else {
                     self.favoriteButton.tintColor = .black
                 }
@@ -257,7 +259,6 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
                     requestAlertController.title = "Done"
                 } else {
                     self.watchListButton.tintColor = .black
-                    requestAlertController.title = "Failed"
                 }
                 self.watchListButton.isEnabled = true
                 requestAlertController.dismiss(animated: true, completion: nil)

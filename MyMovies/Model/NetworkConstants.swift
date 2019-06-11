@@ -10,11 +10,11 @@ import UIKit
 
 final class NetworkConstants {
     
-    static let demoUser = "Marcello14"
-    static let demoPassword = "05430188153"
+    static let demoUser = ""
+    static let demoPassword = ""
     
     enum ApiKeys: String {
-        case api = "6203d05815ada391f8b581d00ebbdbd5"
+        case api = ""         // API KEY HERE
         case version = "/3"
         case scheme = "https"
         case host = "api.themoviedb.org"

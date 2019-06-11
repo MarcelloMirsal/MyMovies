@@ -13,11 +13,11 @@ import AlamofireImage
 
 class NetworkManager {
     
-    /// holds a validated request token.
+    /// holds a shared validated request token.
     public static var validatedRequestToken: RequestToken!
-    /// holds a validated user session.
+    /// holds a shared validated user session.
     public static var userSession: UserSession!
-    /// holds user id (account id)
+    /// holds a shared user id (account id)
     public static var userId: Int!
     
 
@@ -120,9 +120,9 @@ class NetworkManager {
                             return
                         }
                         NetworkManager.userId = (userDict["id"] as! Int)
-                        print(NetworkManager.validatedRequestToken.request_token)
-                        print(NetworkManager.userSession.session_id)
-                        print(NetworkManager.userId!)
+                        print("RequestToken: ",NetworkManager.validatedRequestToken.request_token)
+                        print("Session_Id: ",NetworkManager.userSession.session_id)
+                        print("UserId:",NetworkManager.userId!)
                         completion(NetworkManager.userSession.success,nil)
                     }) // end of user details request
                 }) // end of user session request

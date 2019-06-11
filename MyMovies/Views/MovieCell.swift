@@ -37,6 +37,7 @@ class MovieCell: UICollectionViewCell {
     
     let posterImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.backgroundColor = .darkGray
         return imageView
     }()
     

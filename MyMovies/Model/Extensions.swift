@@ -33,6 +33,8 @@ extension Date {
     }
 }
 
+
+// source: HackingWithSwift Blog 
 extension UIImage {
     var averageColor: UIColor? {
         guard let inputImage = CIImage(image: self) else { return nil }
