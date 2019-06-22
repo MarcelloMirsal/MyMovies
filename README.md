@@ -1,6 +1,8 @@
 # MyMovies
 show movies trends, creates your own lists and search for movies, Using TheMovieDB Api.
 
+![](demo.gif)
+
 
 to use your own data go to Model -> NetworkConstants then fill the demoUser, demoPassword and api key with yours. 
 
