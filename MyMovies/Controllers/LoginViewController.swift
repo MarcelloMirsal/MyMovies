@@ -56,6 +56,7 @@ class LoginViewController: UIViewController {
         
         let tabBarController = MasterTabBarController()
         tabBarController.viewControllers = [todayViewController , listsNavigationController , searchNavigationController]
+        tabBarController.modalPresentationStyle = .fullScreen
         present(tabBarController, animated: true, completion: nil)
     }
     

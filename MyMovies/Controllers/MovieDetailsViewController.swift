@@ -14,6 +14,11 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     // MARK:- Properties
     var movie: Movie?
     
+    override var modalPresentationStyle: UIModalPresentationStyle {
+        get { return .fullScreen }
+        set {  }
+     }
+    
     let networkManager = NetworkManager()
     weak var editingListDelegate: EditingMoviesList?
     
@@ -37,12 +42,14 @@ class MovieDetailsViewController: UIViewController, UIScrollViewDelegate  {
     var movieTitleHeightConstraint = NSLayoutConstraint()
     
     override var prefersStatusBarHidden: Bool {
-        return true
+        get {return true}
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
+    
+    
     
     // MARK:- UI Properties
     let scrollView: UIScrollView = {

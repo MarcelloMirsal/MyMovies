@@ -65,6 +65,9 @@ class NetworkManager {
                 completion(false, .dataUnwrapping)
                 return
             }
+            
+           // print( String.init(data: tokenData, encoding: .utf8) )
+            
             guard let requestToken = try? jsonDecoder.decode(RequestToken.self, from: tokenData) else {
                 completion(false, .dataDecoding)
                 return
